@@ -1,0 +1,20 @@
+html,
+button,
+input,
+select,
+textarea {
+	color: #444;
+}
+
+body {
+	font: 16px/26px Helvetica, Helvetica Neue, Arial;
+}
+
+#demoMSwipe .mSwipe-wrap {background: #ccc;}
+#demoMSwipe .mSwipe-wrap > li {background: #c55;}
+
+.mSwipe-prev, .mSwipe-next {position: absolute; top: 50%; margin-top: -15px; line-height: 20px; padding: 10px; border:0; background: rgba(255,255,255,0.1);}
+.mSwipe-prev {left: 0; border-radius: 0 50% 50% 0;}
+.mSwipe-next {right: 0; border-radius: 50% 0 0 50%;}
+
+.mSwipe-prev:hover, .mSwipe-next:hover, .mSwipe-prev:focus, .mSwipe-next:focus {background: rgba(255,255,255,0.5);}

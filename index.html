@@ -1,0 +1,58 @@
+<!DOCTYPE HTML> 
+<html>
+<head>
+	<title>Swipe 2</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+	<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'/> 
+	<link href='./styles.css' rel='stylesheet'/>
+	<script src="./js/lib/modernizr-2.7.1-custom.js"></script>
+	<style>
+
+	/* Slider styles */
+	.mSwipe {
+		overflow: hidden;
+		/*height: 0;*/
+		position: relative;
+	}
+	.mSwipe-wrap {
+		overflow: hidden;
+		position: relative;
+		margin: 0;
+		padding: 0;
+	}
+	.mSwipe-wrap > li {
+		float:left;
+		list-style: none;
+		width:100%;
+		margin: 0;
+		padding: 0;
+	}
+
+	/* END Slider styles */
+	</style>
+
+</head>
+<body>
+
+	<h1>mSwipe Demo</h1>
+
+	<div id='demoMSwipe' style='max-width:500px; margin:0 auto' class='mSwipe'>
+		<ul class='mSwipe-wrap'>
+			<li><h2>Test</h2><p>Eu</p></li>
+			<li><h2>Test 2</h2><p>Midge</p></li>
+			<li><h2>Test 3</h2><p>Tom<br/>and friends</p></li>
+		</ul>
+
+		<button class="mSwipe-prev" title="previous slide">prev</button>
+		<button class="mSwipe-next" title="next slide">next</button>
+	</div>
+
+
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<script src='./jquery.m-swipe.js'></script>
+	<script>
+		$(".mSwipe").mSwipe();
+	</script>
+</body>
