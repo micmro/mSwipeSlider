@@ -4,8 +4,8 @@
 	<title>Swipe 2</title>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-	<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'/> 
-	<link href='./styles.css' rel='stylesheet'/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/> 
+	<link href="./styles.css" rel="stylesheet"/>
 	<script src="./js/lib/modernizr-2.7.1-custom.js"></script>
 	<style>
 
@@ -15,13 +15,27 @@
 		/*height: 0;*/
 		position: relative;
 	}
-	.mSwipe-wrap {
+	.mSwipe-sled {
 		overflow: hidden;
 		position: relative;
+		left:0;
 		margin: 0;
 		padding: 0;
+		/*switch easing from http://easings.net/*/
+		-webkit-transition: left 200ms cubic-bezier(0.39,0.575,0.565,1);
+		-moz-transition: left 200ms cubic-bezier(0.39,0.575,0.565,1);
+		transition: left 200ms cubic-bezier(0.39,0.575,0.565,1);
 	}
-	.mSwipe-wrap > li {
+	.mSwipe-sled.noTrans {
+		-webkit-transition: left 0;
+		-moz-transition:  left 0;
+		transition:  left 0;
+	}
+	.mSwipe-firstSlide {
+	}
+	.mSwipe-lastSlide {
+	}
+	.mSwipe-sled > li {
 		float:left;
 		list-style: none;
 		width:100%;
@@ -37,21 +51,23 @@
 
 	<h1>mSwipe Demo</h1>
 
-	<div id='demoMSwipe' style='max-width:500px; margin:0 auto' class='mSwipe'>
-		<ul class='mSwipe-wrap'>
+	<div id="demoMSwipe" style="max-width:500px; margin:0 auto;" class="mSwipe">
+		<ul class="mSwipe-sled">
 			<li><h2>Test</h2><p>Eu</p></li>
 			<li><h2>Test 2</h2><p>Midge</p></li>
 			<li><h2>Test 3</h2><p>Tom<br/>and friends</p></li>
+			<li><h2>Test 4</h2><p>Durp</p></li>
+			<li><h2>Test 5</h2><p>Karim<br/>too</p></li>
 		</ul>
 
-		<button class="mSwipe-prev" title="previous slide">prev</button>
-		<button class="mSwipe-next" title="next slide">next</button>
+		<button class="mSwipe-prev" title="previous slide">&lsaquo;</button>
+		<button class="mSwipe-next" title="next slide">&rsaquo;</button>
 	</div>
 
 
 
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-	<script src='./jquery.m-swipe.js'></script>
+	<script src="./jquery.m-swipe.js"></script>
 	<script>
 		$(".mSwipe").mSwipe();
 	</script>
