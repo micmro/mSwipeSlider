@@ -9,7 +9,7 @@
 			onTransitionEnd : function() {},
 			onFinishedSetup : function() {},
 			duration : 500,
-			supportsCsstransitions : !!(Modernizr||{}).csstransitions
+			supportsCsstransitions : !!(Modernizr||{}).csstransitions //use Modernizer if available, but make it overwritable
 		}, options );
 
 		return this.each(function(i, el) {
@@ -25,11 +25,48 @@
 			window._next = $next;
 			window._prev = $prev;
 
+
+			self.util = {
+				throttle : function throttle(fn, postFn, throttleFrequency, postFnDelay) {
+					var last, deferTimer, deferCleanupTimer;
+					throttleFrequency || (throttleFrequency = 50);
+					postFnDelay || (postFnDelay = throttleFrequency);
+
+					var resetCleanup = function(){
+						if(typeof postFn == "function"){
+							clearTimeout(deferTimer);
+							deferCleanupTimer = setTimeout(function(){
+								postFn.apply(self);
+							}, postFnDelay);
+						}
+					};
+
+					return function () {
+						var now = +new Date, args = arguments;
+						if (last && now < last + throttleFrequency) {
+							clearTimeout(deferTimer);
+							clearTimeout(deferCleanupTimer);
+							deferTimer = setTimeout(function () {
+								last = now;
+								fn.apply(self, args);
+								resetCleanup();
+							}, throttleFrequency);
+						} else {
+							last = now;
+							fn.apply(self, args);
+							resetCleanup();
+						}
+					};
+				}
+			};
+
+
 			var activeSlide = 0,
 				totalSlides = $slides.length-1;
 
-			self.initDimensions = function(){
+			self.initDimensions = function initDimensions(){
 				console.log("initDimensions");
+
 				//get highest element height
 				var maxHeight = Math.max.apply(null, $slides.map(function (){
 						return $(this).height();
@@ -49,63 +86,68 @@
 			};
 
 
-			var throttleAndCleanup = function throttle(fn, cleanUpFn) {
-				var last, deferTimer, deferCleanupTimer;
 
-				var resetCleanup = function(){
-					clearTimeout(deferTimer);
-					deferCleanupTimer = setTimeout(function(){
-						cleanUpFn.apply(self);
-					}, 50);
-				};
-
-				return function () {
-					var now = +new Date, args = arguments;
-					if (last && now < last + 50) {
-						clearTimeout(deferTimer);
-						clearTimeout(deferCleanupTimer);
-						deferTimer = setTimeout(function () {
-							last = now;
-							$slideSled.addClass("noTrans");
-							fn.apply(self, args);
-							resetCleanup();
-						}, 50);
-					} else {
-						last = now;
-						$slideSled.addClass("noTrans");
-						fn.apply(self, args);
-						resetCleanup();
-					}
-				};
-			};
-
-
-			var bindEvents = function(){
+			var bindEvents = function bindEvents(){
 				$this.on("click.mSwipe", ".mSwipe-next", methods.next);
 				$this.on("click.mSwipe", ".mSwipe-prev", methods.prev);
 
-				$(window).on("resize.mSwipe", throttleAndCleanup(self.initDimensions, function(){
+				$this.on("touchstart", ".mSwipe-sled > li", function(event){
+					$this.touchstartx =  event.originalEvent.touches[0].pageX;
+					$this.touchstartWidth = $this.width();
+					$this.touchMoveActive = true;
+					$slideSled.addClass("noTrans");
+				});
+
+
+				$this.on("touchmove", ".mSwipe-sled > li", function(event){
+					if($this.touchMoveActive){
+						moveSlides((-$this.touchstartWidth * activeSlide) - ($this.touchstartx - event.originalEvent.touches[0].pageX), true);
+					}
+				});
+				// $this.on("touchmove", ".mSwipe-sled > li", self.util.throttle(function(event){
+				// 		if($this.touchMoveActive){
+				// 			moveSlides((-$this.touchstartWidth * activeSlide) - ($this.touchstartx - event.originalEvent.touches[0].pageX), true);
+				// 		}
+				// 	}, function(){}, 16, 16));
+
+				$this.on("touchend", ".mSwipe-sled > li", function(event){
+					$this.touchMoveActive = false;
 					$slideSled.removeClass("noTrans");
-				}));
+
+					if($slideSled.position().left < (-$this.touchstartWidth * (activeSlide + 0.5)) && activeSlide < totalSlides){
+						methods.next();
+					}else if($slideSled.position().left > (-$this.touchstartWidth * (activeSlide - 0.5)) && activeSlide > 0) {
+						methods.prev();
+					}else{
+						methods.reset();
+					}
+				});
+
+
+				$(window).on("resize.mSwipe", self.util.throttle(function(){
+					$slideSled.addClass("noTrans");
+					self.initDimensions();
+				}, function(){
+					$slideSled.removeClass("noTrans");
+				}, 16));
 			};
 
 
-			var moveSlides = function(leftPosition){
-				console.log(settings.supportsCsstransitions, leftPosition);
-				if(settings.supportsCsstransitions){
-					$slideSled.css({"left" : leftPosition + "px"})
+			var moveSlides = function moveSlides(leftPosition, doNotAnimate){
+				if(settings.supportsCsstransitions || doNotAnimate){
+					$slideSled.css({"left" : leftPosition + "px"});
 				}else{
 					$slideSled.animate({"left" : leftPosition + "px"}, {
 						duration : settings.duration,
 						queue : false,
 						start : settings.onTransitionStart,
-						always : settings.onTransitionStart
+						always : settings.onTransitionEnd
 					});
 				}
 			};
 
 
-			var updateButtonState = function(){
+			var updateButtonState = function updateButtonState(){
 				$this.toggleClass("firstSlide", (activeSlide == 0));
 				$prev.prop("disabled", (activeSlide == 0));
 
@@ -116,7 +158,7 @@
 
 			
 			var methods = {
-				"prev" : function(){
+				"prev" : function prev(){
 					console.log("prev",activeSlide);
 					if(activeSlide > 0){
 						moveSlides(-$this.width() * (activeSlide-1));
@@ -124,13 +166,17 @@
 						updateButtonState();
 					}
 				},
-				"next" : function(){
-					console.log("next",activeSlide);
+				"next" : function next(){
+					console.log("next", activeSlide);
 					if(activeSlide < totalSlides){
 						moveSlides(-$this.width() * (activeSlide+1));
 						activeSlide++;
 						updateButtonState();
 					}
+				},
+				"reset" : function prev(){
+					console.log("reset", -$this.width() * activeSlide, $this);
+					moveSlides(-$this.width() * activeSlide);
 				}
 			};
 

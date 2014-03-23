@@ -14,6 +14,11 @@
 		overflow: hidden;
 		/*height: 0;*/
 		position: relative;
+		-webkit-transform: translateZ(0);
+		-moz-transform: translateZ(0);
+		-ms-transform: translateZ(0);
+		-o-transform: translateZ(0);
+		transform: translateZ(0);
 	}
 	.mSwipe-sled {
 		overflow: hidden;
@@ -25,6 +30,15 @@
 		-webkit-transition: left 200ms cubic-bezier(0.39,0.575,0.565,1);
 		-moz-transition: left 200ms cubic-bezier(0.39,0.575,0.565,1);
 		transition: left 200ms cubic-bezier(0.39,0.575,0.565,1);
+
+		 /* Prevents Metro from swiping to the next tab or app. */
+		-ms-scroll-chaining: none;
+
+		-ms-scroll-snap-type: mandatory;
+		/* Forces a snap scroll behavior on your images. */
+
+		ms-scroll-snap-points-x: snapInterval(0%, 100%);
+		/* Defines the y and x intervals to snap to when scrolling. */
 	}
 	.mSwipe-sled.noTrans {
 		-webkit-transition: left 0;
@@ -66,7 +80,8 @@
 
 
 
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<script src="./js/lib/jquery-1.11.0.min.js"></script>
+	<script src="./js/lib/jquery.requestAnimationFrame.js"></script>
 	<script src="./jquery.m-swipe.js"></script>
 	<script>
 		$(".mSwipe").mSwipe();

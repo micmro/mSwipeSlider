@@ -4,6 +4,22 @@
 		"selected_items":
 		[
 			[
+				"cl",
+				"clearTimeout();"
+			],
+			[
+				"bor",
+				"border-right-width"
+			],
+			[
+				"ma",
+				"margin"
+			],
+			[
+				"fade",
+				"fadeOut	.fadeOut()"
+			],
+			[
 				"con",
 				"console.log(message);"
 			],
@@ -84,10 +100,6 @@
 				"left"
 			],
 			[
-				"ma",
-				"margin-bottom"
-			],
-			[
 				"b",
 				"bold"
 			],
@@ -120,10 +132,6 @@
 				"padding"
 			],
 			[
-				"cl",
-				"clear"
-			],
-			[
 				"m",
 				"margin"
 			],
@@ -134,10 +142,6 @@
 			[
 				"ba",
 				"background"
-			],
-			[
-				"bor",
-				"border-top-style"
 			],
 			[
 				"po",
@@ -160,11 +164,27 @@
 	"buffers":
 	[
 		{
-			"file": "mSlider.sublime-project",
+			"file": "jquery.m-swipe.js",
 			"settings":
 			{
-				"buffer_size": 84,
-				"line_ending": "Unix"
+				"buffer_size": 3555,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "index.html",
+			"settings":
+			{
+				"buffer_size": 1750,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "styles.css",
+			"settings":
+			{
+				"buffer_size": 1216,
+				"line_ending": "Windows"
 			}
 		}
 	],
@@ -244,6 +264,8 @@
 	},
 	"file_history":
 	[
+		"/D/Work Documents/Testbed/jQuery/mSlider/mSlider.sublime-project",
+		"/D/Work Documents/Testbed/Glass/glass-shopping/glass-shopping.sublime-project",
 		"/D/Work Documents/Testbed/jQuery/Swipe/swipe.js",
 		"/D/Work Documents/Testbed/Glass/GlassTest/glass-mirror-api-test/views/index.jade",
 		"/D/Work Documents/Testbed/node-js/hot-folder-image-compressor/package.json",
@@ -369,9 +391,7 @@
 		"/D/Work Documents/Testbed/Play-apps/samples/java/helloworld/conf/play.plugins",
 		"/D/Work Documents/Testbed/Play-apps/samples/java/helloworld/public/javascripts/mustache-0.7.0.min.js",
 		"/D/Work Documents/Testbed/Play-apps/samples/java/helloworld/app/assets/mustache/test.html",
-		"/D/Work Documents/Testbed/Play-apps/samples/java/helloworld/assets/mustache/test.html",
-		"/D/Work Documents/Testbed/Play-apps/play-mustache/play-mustache/documentation/manual/home.textile",
-		"/D/Work Documents/Testbed/node-js/appfog/midge/public/index.html"
+		"/D/Work Documents/Testbed/Play-apps/samples/java/helloworld/assets/mustache/test.html"
 	],
 	"find":
 	{
@@ -390,6 +410,36 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"resetCleanup",
+			"deferTimer",
+			"initDimensions",
+			"throttle",
+			"leftPosition",
+			"initDimensions",
+			"maxHeight",
+			"throttleDuration",
+			"deferTimer",
+			"moveSlides",
+			"leftPosition",
+			"outerWidth",
+			"totalSlides",
+			"activeSlide",
+			"totalSlides",
+			"activeSlide",
+			"this",
+			"updateButtonState",
+			"slideSled",
+			"slideWrap",
+			"Modernizr",
+			"'",
+			"mSwipe-wrap",
+			"currSlide",
+			"moveSlides",
+			"currSlide",
+			"totalSlides",
+			"currSlide",
+			"updateButtonState",
+			"currSlide",
 			"gotToken",
 			"itemId",
 			"user",
@@ -487,37 +537,7 @@
 			"search-error",
 			"parsePhantomResponse",
 			"onerror",
-			"Fail to load the current url",
-			"parsePhantomResponse",
-			"Fail to parse site",
-			"errorCode",
-			"parsePhantomResponse",
-			"onerror",
-			"404",
-			"Fail to load the current url",
-			"home-result-server-error",
-			"timeout",
-			"server-error-503",
-			"+ quer",
-			"parsePhantomResponse",
-			"phantomProcess.kill();",
-			"error",
-			"503",
-			"'home'",
-			"\"home\"",
-			"search-server-error",
-			"server-",
-			"timeout",
-			"1500",
-			"bbc",
-			"timeou",
-			"data.coloursText",
-			" data.coloursText",
-			"renderResult",
-			"data.coloursText",
-			"coloursText",
-			"errorMsg",
-			"error"
+			"Fail to load the current url"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -525,6 +545,11 @@
 		"regex": false,
 		"replace_history":
 		[
+			"slidesSled",
+			"slideSled",
+			"\"",
+			"mSwipe-sled",
+			"activeSlide",
 			"options.resultPath",
 			"options.watchPath",
 			"\\\\",
@@ -595,23 +620,78 @@
 			[
 				{
 					"buffer": 0,
-					"file": "mSlider.sublime-project",
+					"file": "jquery.m-swipe.js",
 					"settings":
 					{
-						"buffer_size": 84,
+						"buffer_size": 3555,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								83,
-								83
+								1500,
+								1500
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScript/JSON.tmLanguage"
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 693.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "index.html",
+					"settings":
+					{
+						"buffer_size": 1750,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1177,
+								1179
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 375.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "styles.css",
+					"settings":
+					{
+						"buffer_size": 1216,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								214,
+								214
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
