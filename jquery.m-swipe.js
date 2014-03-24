@@ -57,6 +57,9 @@
 							resetCleanup();
 						}
 					};
+				}, 
+				easing : function easing(t){
+					return t*(2-t); 
 				}
 			};
 
@@ -95,20 +98,28 @@
 					$this.touchstartx =  event.originalEvent.touches[0].pageX;
 					$this.touchstartWidth = $this.width();
 					$this.touchMoveActive = true;
+					$this.touchLeft = 0;
 					$slideSled.addClass("noTrans");
 				});
 
 
-				$this.on("touchmove", ".mSwipe-sled > li", function(event){
-					if($this.touchMoveActive){
-						moveSlides((-$this.touchstartWidth * activeSlide) - ($this.touchstartx - event.originalEvent.touches[0].pageX), true);
-					}
-				});
-				// $this.on("touchmove", ".mSwipe-sled > li", self.util.throttle(function(event){
-				// 		if($this.touchMoveActive){
-				// 			moveSlides((-$this.touchstartWidth * activeSlide) - ($this.touchstartx - event.originalEvent.touches[0].pageX), true);
-				// 		}
-				// 	}, function(){}, 16, 16));
+				// $this.on("touchmove", ".mSwipe-sled > li", function(event){
+				// 	if($this.touchMoveActive){
+				// 		moveSlides((-$this.touchstartWidth * activeSlide) - ($this.touchstartx - event.originalEvent.touches[0].pageX), true);
+				// 	}
+				// });
+				var x = 0;
+				$this.on("touchmove", ".mSwipe-sled > li", self.util.throttle(function(event){
+						if($this.touchMoveActive){
+							$this.touchLeft = (-$this.touchstartWidth * activeSlide) - ($this.touchstartx - event.originalEvent.touches[0].pageX);
+							if($this.touchLeft > 0){
+								x = $this.touchLeft/$this.touchstartWidth;
+								moveSlides(self.util.easing(x > 1 ? 1 : x) * ($this.touchstartWidth/8), true);
+							}else{
+								moveSlides($this.touchLeft, true);
+							}
+						}
+					}, function(){}, 16, 16));
 
 				$this.on("touchend", ".mSwipe-sled > li", function(event){
 					$this.touchMoveActive = false;
