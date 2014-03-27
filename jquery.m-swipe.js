@@ -20,12 +20,8 @@
 				$next = $this.find(".mSwipe-next"),
 				$prev = $this.find(".mSwipe-prev");
 
-			//temp debug
-			window._this = $this;
-			window._next = $next;
-			window._prev = $prev;
 
-
+			//helpers
 			self.util = {
 				throttle : function throttle(fn, postFn, throttleFrequency, postFnDelay) {
 					var last, deferTimer, deferCleanupTimer;
@@ -88,40 +84,50 @@
 				});
 			};
 
+	
 
 
 			var bindEvents = function bindEvents(){
+				//basic previous/next bindings
 				$this.on("click.mSwipe", ".mSwipe-next", methods.next);
 				$this.on("click.mSwipe", ".mSwipe-prev", methods.prev);
 
+				//beginning of touch - setup of vars for touchmove
 				$this.on("touchstart", ".mSwipe-sled > li", function(event){
 					$this.touchstartx =  event.originalEvent.touches[0].pageX;
 					$this.touchstartWidth = $this.width();
+					$this.touchstartTotalWidth = $this.touchstartWidth * totalSlides;
+
 					$this.touchMoveActive = true;
 					$this.touchLeft = 0;
 					$slideSled.addClass("noTrans");
 				});
 
 
-				// $this.on("touchmove", ".mSwipe-sled > li", function(event){
-				// 	if($this.touchMoveActive){
-				// 		moveSlides((-$this.touchstartWidth * activeSlide) - ($this.touchstartx - event.originalEvent.touches[0].pageX), true);
-				// 	}
-				// });
-				var x = 0;
-				$this.on("touchmove", ".mSwipe-sled > li", self.util.throttle(function(event){
+				var xPos = 0;
+				//deal with the touch move
+				$this.on("touchmove.mSwipe", ".mSwipe-sled > li", self.util.throttle(function(event){
 						if($this.touchMoveActive){
 							$this.touchLeft = (-$this.touchstartWidth * activeSlide) - ($this.touchstartx - event.originalEvent.touches[0].pageX);
 							if($this.touchLeft > 0){
-								x = $this.touchLeft/$this.touchstartWidth;
-								moveSlides(self.util.easing(x > 1 ? 1 : x) * ($this.touchstartWidth/8), true);
+								//left end
+								xPos = $this.touchLeft/$this.touchstartWidth;
+								moveSlides(self.util.easing(xPos > 1 ? 1 : xPos) * ($this.touchstartWidth / 8), true);
+
+							}else if(totalSlides == activeSlide && $this.touchstartTotalWidth < Math.abs($this.touchLeft)){
+								//right end
+								xPos = ($this.touchLeft + $this.touchstartTotalWidth) / -$this.touchstartWidth
+								moveSlides(-(self.util.easing(xPos > 1 ? 1 : xPos) * $this.touchstartWidth/8)-$this.touchstartTotalWidth, true);
+
 							}else{
+								//normal
 								moveSlides($this.touchLeft, true);
 							}
 						}
 					}, function(){}, 16, 16));
 
-				$this.on("touchend", ".mSwipe-sled > li", function(event){
+				//end of touch - decide wether or not to change slide
+				$this.on("touchend.mSwipe", ".mSwipe-sled > li", function(event){
 					$this.touchMoveActive = false;
 					$slideSled.removeClass("noTrans");
 
@@ -134,7 +140,7 @@
 					}
 				});
 
-
+				//change sizing of widget
 				$(window).on("resize.mSwipe", self.util.throttle(function(){
 					$slideSled.addClass("noTrans");
 					self.initDimensions();
@@ -170,7 +176,6 @@
 			
 			var methods = {
 				"prev" : function prev(){
-					console.log("prev",activeSlide);
 					if(activeSlide > 0){
 						moveSlides(-$this.width() * (activeSlide-1));
 						activeSlide--;
@@ -178,7 +183,6 @@
 					}
 				},
 				"next" : function next(){
-					console.log("next", activeSlide);
 					if(activeSlide < totalSlides){
 						moveSlides(-$this.width() * (activeSlide+1));
 						activeSlide++;
@@ -186,8 +190,12 @@
 					}
 				},
 				"reset" : function prev(){
-					console.log("reset", -$this.width() * activeSlide, $this);
 					moveSlides(-$this.width() * activeSlide);
+				},
+				"slideCountChanged" : function elementsChanged(){
+					$slides = $slideSled.children("li");
+					totalSlides = $slides.length-1;
+					self.initDimensions();
 				}
 			};
 
@@ -197,6 +205,19 @@
 			bindEvents();
 		});
 
-	}
+	};
+
+
+	//TODO: expose functions
+	//  $.fn.mSwipe = function(methodOrOptions) {
+	// 	if ( methods[methodOrOptions] ) {
+	// 		return methods[ methodOrOptions ].apply( this, Array.prototype.slice.call( arguments, 1 ));
+	// 	} else if ( typeof methodOrOptions === 'object' || ! methodOrOptions ) {
+	// 		// Default to "init"
+	// 		return methods.init.apply( this, arguments );
+	// 	} else {
+	// 		$.error( 'Method ' +  methodOrOptions + ' does not exist on jQuery.tooltip' );
+	// 	}
+	// };
 
 })(jQuery, window.Modernizr);
