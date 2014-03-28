@@ -16,10 +16,10 @@
 		return this.each(function(i, el) {
 			var self = this,
 				$this = $(el),
-				$slideSled = $this.children(".mSwipeSlider-sled"),
+				$slideSled = $this.children(".mSwipe-sled"),
 				$slides = $slideSled.children("li"),
-				$next = $this.find(".mSwipeSlider-next"),
-				$prev = $this.find(".mSwipeSlider-prev");
+				$next = $this.find(".mSwipe-next"),
+				$prev = $this.find(".mSwipe-prev");
 
 
 			//helpers
@@ -90,11 +90,11 @@
 
 			var bindEvents = function bindEvents(){
 				//basic previous/next bindings
-				$this.on("click.mSwipeSlider", ".mSwipeSlider-next", methods.next);
-				$this.on("click.mSwipeSlider", ".mSwipeSlider-prev", methods.prev);
+				$this.on("click.mSwipe", ".mSwipe-next", methods.next);
+				$this.on("click.mSwipe", ".mSwipe-prev", methods.prev);
 
 				//beginning of touch - setup of vars for touchmove
-				$this.on("touchstart", ".mSwipeSlider-sled > li", function(event){
+				$this.on("touchstart", ".mSwipe-sled > li", function(event){
 					$this.touchstartx =  event.originalEvent.touches[0].pageX;
 					$this.touchstartWidth = $this.width();
 					$this.touchstartTotalWidth = $this.touchstartWidth * totalSlides;
@@ -107,7 +107,7 @@
 
 				var xPos = 0;
 				//deal with the touch move
-				$this.on("touchmove.mSwipeSlider", ".mSwipeSlider-sled > li", self.util.throttle(function(event){
+				$this.on("touchmove.mSwipe", ".mSwipe-sled > li", self.util.throttle(function(event){
 						if($this.touchMoveActive){
 							$this.touchLeft = (-$this.touchstartWidth * activeSlide) - ($this.touchstartx - event.originalEvent.touches[0].pageX);
 							if($this.touchLeft > 0){
@@ -128,7 +128,7 @@
 					}, function(){}, 16, 16));
 
 				//end of touch - decide wether or not to change slide
-				$this.on("touchend.mSwipeSlider", ".mSwipeSlider-sled > li", function(event){
+				$this.on("touchend.mSwipe", ".mSwipe-sled > li", function(event){
 					$this.touchMoveActive = false;
 					$slideSled.removeClass("noTrans");
 
@@ -142,7 +142,7 @@
 				});
 
 				//change sizing of widget
-				$(window).on("resize.mSwipeSlider", self.util.throttle(function(){
+				$(window).on("resize.mSwipe", self.util.throttle(function(){
 					$slideSled.addClass("noTrans");
 					self.initDimensions();
 				}, function(){
