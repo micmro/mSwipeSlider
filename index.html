@@ -10,7 +10,7 @@
 	<style>
 
 	/* Slider styles */
-	.mSwipe {
+	.mSwipeSlider {
 		overflow: hidden;
 		/*height: 0;*/
 		position: relative;
@@ -20,7 +20,7 @@
 		-o-transform: translateZ(0);
 		transform: translateZ(0);
 	}
-	.mSwipe-sled {
+	.mSwipeSlider-sled {
 		overflow: hidden;
 		position: relative;
 		left:0;
@@ -40,16 +40,16 @@
 		ms-scroll-snap-points-x: snapInterval(0%, 100%);
 		/* Defines the y and x intervals to snap to when scrolling. */
 	}
-	.mSwipe-sled.noTrans {
+	.mSwipeSlider-sled.noTrans {
 		-webkit-transition: left 0;
 		-moz-transition:  left 0;
 		transition:  left 0;
 	}
-	.mSwipe-firstSlide {
+	.mSwipeSlider-firstSlide {
 	}
-	.mSwipe-lastSlide {
+	.mSwipeSlider-lastSlide {
 	}
-	.mSwipe-sled > li {
+	.mSwipeSlider-sled > li {
 		float:left;
 		list-style: none;
 		width:100%;
@@ -63,10 +63,10 @@
 </head>
 <body>
 
-	<h1>mSwipe Demo</h1>
+	<h1>mSwipeSlider Demo</h1>
 
-	<div id="demoMSwipe" style="max-width:500px; margin:0 auto;" class="mSwipe">
-		<ul class="mSwipe-sled">
+	<div id="demomSwipeSlider" style="max-width:500px; margin:0 auto;" class="mSwipeSlider">
+		<ul class="mSwipeSlider-sled">
 			<li><h2>Test</h2><p>Eu</p></li>
 			<li><h2>Test 2</h2><p>Midge</p></li>
 			<li><h2>Test 3</h2><p>Tom<br/>and friends</p></li>
@@ -74,8 +74,23 @@
 			<li><h2>Test 5</h2><p>Karim<br/>too</p></li>
 		</ul>
 
-		<button class="mSwipe-prev" title="previous slide">&lsaquo;</button>
-		<button class="mSwipe-next" title="next slide">&rsaquo;</button>
+		<button class="mSwipeSlider-prev" title="previous slide">&lsaquo;</button>
+		<button class="mSwipeSlider-next" title="next slide">&rsaquo;</button>
+	</div>
+
+	<br/><br/>
+
+	<div id="demomSwipeSlider2" style="max-width:500px; margin:0 auto;" class="mSwipeSlider">
+		<ul class="mSwipeSlider-sled">
+			<li><h2>Test</h2><p>Second Slider</p></li>
+			<li><h2>Test 2</h2><p>Second Slider Midge</p></li>
+			<li><h2>Test 3</h2><p>Second Slider Tom<br/>and friends</p></li>
+			<li><h2>Test 4</h2><p>Second Slider Durp</p></li>
+			<li><h2>Test 5</h2><p>Second Slider Karim<br/>too</p></li>
+		</ul>
+
+		<button class="mSwipeSlider-prev" title="previous slide">&lsaquo;</button>
+		<button class="mSwipeSlider-next" title="next slide">&rsaquo;</button>
 	</div>
 
 
@@ -84,6 +99,6 @@
 	<script src="./js/lib/jquery.requestAnimationFrame.js"></script>
 	<script src="./jquery.m-swipe.js"></script>
 	<script>
-		$(".mSwipe").mSwipe();
+		$(".mSwipeSlider").mSwipeSlider();
 	</script>
 </body>

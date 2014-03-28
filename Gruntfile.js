@@ -13,7 +13,7 @@ module.exports = function( grunt ) {
 		uglify: {
 			options: {
 				mangle: {
-					except: ['mSwipe']
+					except: ['mSwipeSlider']
 				}
 			},
 			dist: {
