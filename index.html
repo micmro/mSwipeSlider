@@ -27,9 +27,9 @@
 		margin: 0;
 		padding: 0;
 		/*switch easing from http://easings.net/*/
-		-webkit-transition: left 200ms cubic-bezier(0.39,0.575,0.565,1);
-		-moz-transition: left 200ms cubic-bezier(0.39,0.575,0.565,1);
-		transition: left 200ms cubic-bezier(0.39,0.575,0.565,1);
+		-webkit-transition: left 500ms cubic-bezier(0.39,0.575,0.565,1);
+		-moz-transition: left 500ms cubic-bezier(0.39,0.575,0.565,1);
+		transition: left 500ms cubic-bezier(0.39,0.575,0.565,1);
 
 		 /* Prevents Metro from swiping to the next tab or app. */
 		-ms-scroll-chaining: none;
@@ -59,9 +59,12 @@
 </head>
 <body>
 
-	<h1>mSwipeSlider Demo</h1>
 
-	<div id="demo-mSwipeSlider" style="max-width:500px; margin:0 auto;" class="mSwipe">
+
+	<!-- view-source:http://hanshillen.github.io/jqtest/#goto_carousel -->
+	<h1 id="carouselId1">mSwipeSlider Demo</h1>
+
+	<div id="demo-mSwipeSlider" aria-labelledby="carouselId1" style="max-width:500px; margin:0 auto;" class="mSwipe">
 		<ul class="mSwipe-sled">
 			<li><h2>Test</h2><p>Eu</p></li>
 			<li><h2>Test 2</h2><p>Midge</p></li>
@@ -75,8 +78,9 @@
 	</div>
 
 	<br/><br/>
+	<h1 id="carouselId2">mSwipeSlider Demo</h1>
 
-	<div id="demo-mSwipeSlider2" style="max-width:500px; margin:0 auto;" class="mSwipe">
+	<div id="demo-mSwipeSlider2" aria-labelledby="carouselId2" aria-role="complementary" style="max-width:500px; margin:0 auto;" class="mSwipe">
 		<ul class="mSwipe-sled">
 			<li><h2>Test</h2><p>Second Slider</p></li>
 			<li><h2>Test 2</h2><p>Second Slider Midge</p></li>
@@ -90,6 +94,10 @@
 	</div>
 
 
+	<div>
+		<h2>Support</h2>
+		<ul id="supportTrace"></ul>
+	</div>
 
 	<script src="./js/lib/jquery-1.11.0.min.js"></script>
 	<script src="./js/lib/jquery.requestAnimationFrame.js"></script>
@@ -98,3 +106,4 @@
 		console.log($(".mSwipe").mSwipeSlider());
 	</script>
 </body>
+</html>

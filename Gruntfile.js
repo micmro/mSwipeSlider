@@ -23,8 +23,18 @@ module.exports = function( grunt ) {
 			}
 		},
 
+		watch: {
+			loadFiles: {
+				files: ['index.html','*.js','*.css']
+			},
+			options: {
+				// Start a live reload server on the default port 35729
+				livereload: 1337,
+			}
+		},
+
 		// grunt-contrib-connect will serve the files of the project
-		// on specified port and hostname
+		// on specified port and hostname and injects the live reload script
 		connect: {
 			all: {
 				options:{
@@ -32,9 +42,12 @@ module.exports = function( grunt ) {
 					hostname: "0.0.0.0",
 					middleware: function(connect, options) {
 						return [
-							require('grunt-contrib-livereload/lib/utils').livereloadSnippet,
+							require('connect-livereload')({
+								port: grunt.config.get("watch.options.livereload")
+								// ignore: ['Gruntfile.js']
+							})
 							// Serve the project folder
-							connect.static(options.base)
+							,connect.static(options.base)
 						];
 					}
 				}			
@@ -45,28 +58,17 @@ module.exports = function( grunt ) {
 			all: {
 				path: 'http://localhost:<%= connect.all.options.port%>'
 			}
-		},
-
-		// grunt-regarde monitors the files and triggers livereload
-		// Surprisingly, livereload complains when you try to use grunt-contrib-watch instead of grunt-regarde 
-		regarde: {
-			all: {
-				// This'll just watch the index.html file, you could add **/*.js or **/*.css
-				// to watch Javascript and CSS files too.
-				files:['index.html','*.js','*.css'],
-				// This configures the task that will run when the file change
-				tasks: ['livereload']
-			}
 		}
-
 	});
 
 	// build
 	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-contrib-connect');
+
+
 	grunt.registerTask('build', 'uglify');
 
 	// dev server / auto reload
-	grunt.registerTask('server', ['livereload-start', 'connect', 'open', 'regarde']);
-	
-	grunt.registerTask('default', 'server');
+	grunt.registerTask('dev', ['connect', 'open', 'watch']);
+	grunt.registerTask('default', 'dev');
 };
