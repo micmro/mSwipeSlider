@@ -25,7 +25,8 @@ build/Release
 node_modules
 
 # sublime files
-mSlider.sublime-workspace
+*.sublime-workspace
+*.sublime-project
 
 # other unnecessary folders
 temp
