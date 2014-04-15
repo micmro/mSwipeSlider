@@ -11,10 +11,10 @@ How to run this via Grunt
 To work on the slider leveraging a static file server and automatic reload or to uglify the file.
 
 - Install grunt
- ```bash
+ ```
  npm install -g grunt-cli
  ```
 - cd into directory and 
- ```bash
+ ```
  grunt
  ```
