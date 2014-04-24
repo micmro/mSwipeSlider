@@ -28,9 +28,10 @@ module.exports = function( grunt ) {
 				files: ['index.html','*.js','*.css']
 			},
 			options: {
-				// Start a live reload server on the default port 35729
+				// default port is 35729
 				livereload: 1337,
-			}
+			},
+			//tasks: ['jshint'],
 		},
 
 		// grunt-contrib-connect will serve the files of the project

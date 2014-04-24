@@ -1,9 +1,11 @@
-/*Slider plugin*/
+/**
+* MSwipeSlider widget
+**/
+
 (function($, Modernizr){
 	"use strict";
 
 	var MSwipeSlider = function(element, options) {
-	//$.fn.mSwipeSlider = function(options) {
 
 		var self = this,
 			$this = $(element),
@@ -16,15 +18,15 @@
 				onTransitionEnd : function() {},
 				onFinishedSetup : function() {},
 				duration : 350,
-				pagingTouchLength : 50, //required length 1 == 100% | 0.25 == 25% of width
-				supportsCsstransitions : !!(Modernizr||{}).csstransitions //use Modernizer if available, but make it overwritable
+				pagingTouchLength : 100, //in px
+				supportsCsstransitions : !!(Modernizr||{}).csstransitions, //use Modernizer if available, but make it overwritable
+				supportsCsstransforms : !!(Modernizr||{}).csstransforms //use Modernizer if available, but make it overwritable
 			}, options );
 
 
 		/*
 		http://www.webaxe.org/carousels-and-aria-tabs/
 		http://accessibility.athena-ict.com/aria/examples/carousel.shtml
-
 		*/
 		$slideSled.attr("aria-live", "polite").css({
 			"-webkit-transition-duration" : settings.duration + "ms",
@@ -75,6 +77,7 @@
 			totalSlides = $slides.length-1;
 
 		var initDimensions = function initDimensions(){
+			$slideSled.addClass("noTrans");
 			//get highest element height
 			var maxHeight = Math.max.apply(null, $slides.map(function (){
 					return $(this).height();
@@ -91,14 +94,26 @@
 				height: maxHeight,
 				left : -outerWidth * activeSlide
 			});
+			$slideSled.removeClass("noTrans");
 		};
 
-
-		var moveSlides = function moveSlides(leftPosition, doNotAnimate){			
-			if(settings.supportsCsstransitions || doNotAnimate){
-				$slideSled.css({"left" : leftPosition + "px"});
+		var transformOrLeftCssAttrite = function(leftPosition){
+			if(settings.supportsCsstransforms){
+				//-ms-transform:translate(0px,0px); /* IE 9 */
+				//-webkit-transform:translate(0px,0px);
+				return {"transform" : "translate("+leftPosition + "px, 0px)"};
 			}else{
-				$slideSled.animate({"left" : leftPosition + "px"}, {
+				return {"left" : leftPosition + "px"};
+			}
+		};
+		var moveSlides = function moveSlides(leftPosition, doNotAnimate){		
+			if(settings.supportsCsstransitions || doNotAnimate){
+				//$slideSled.css({"left" : leftPosition + "px"});
+				$slideSled.css(transformOrLeftCssAttrite(leftPosition));
+				//$slideSled[0].style.left = leftPosition + "px";
+
+			}else{
+				$slideSled.animate(transformOrLeftCssAttrite(leftPosition), {
 					duration : settings.duration,
 					queue : false,
 					start : function(){
@@ -128,6 +143,7 @@
 
 		//public: move to previous slide
 		self.prev = function prev(){
+			console.log("prev");
 			if(activeSlide > 0){
 				activeSlide--;
 				moveSlides(-$this.width() * activeSlide);
@@ -140,6 +156,7 @@
 
 		//public: move to next slide
 		self.next = function next(){
+			console.log("next");
 			if(activeSlide < totalSlides){
 				activeSlide++;
 				moveSlides(-$this.width() * activeSlide);
@@ -152,6 +169,7 @@
 
 		//public: reset center to current slide
 		self.reset = function reset(){
+			console.log("reset");
 			moveSlides(-$this.width() * activeSlide);
 			//make this chainable 
 			return element;
@@ -167,19 +185,11 @@
 		};
 
 
-				//TEMP - DEBUG
-		var trcHolder = $("#supportTrace");
-
-		var trc = function(msg){
-			console.log(msg);
-			//trcHolder.append("<li>"+msg+"</li>");
-		};
-	
-
 		//beginning of touch - setup of vars for touchmove
-		var onTouchStart = function(event){
+		var onTouchStart = function onTouchStart(event){
 			event.preventDefault();
 			$this.touchstartx =  event.originalEvent.touches[0].pageX;
+			$this.touchstartY =  event.originalEvent.touches[0].pageY;
 			$this.touchstartWidth = $this.width();
 			$this.touchstartTotalWidth = $this.touchstartWidth * totalSlides;
 
@@ -187,15 +197,25 @@
 			$this.touchLeft = 0;
 
 			$slideSled.addClass("noTrans");
+			console.log("onTouchStart");
 		};
 
 
 		//throttles slide repositioning based on finger
 		var xPos;
-		//var onTouchMove = self.util.throttle(function(event){
-		var onTouchMove = function(event){
+		var yScrollDifference;
+		var onTouchMove = self.util.throttle(function onTouchMove(event){
 			event.preventDefault();
+			event.stopPropagation();
+
+			//maintain vertical scroll functionality
+			yScrollDifference = event.originalEvent.touches[0].pageY - $this.touchstartY;
+			if(Math.abs(yScrollDifference) > 1){
+				scrollTo(scrollX, scrollY - yScrollDifference);
+			}
+			
 			if($this.touchMoveActive){
+				
 				$this.touchLeft = (-$this.touchstartWidth * activeSlide) - ($this.touchstartx - event.originalEvent.touches[0].pageX);
 				if($this.touchLeft > 0){
 					//left end
@@ -208,26 +228,34 @@
 					moveSlides(-(self.util.easing(xPos > 1 ? 1 : xPos) * $this.touchstartWidth/8)-$this.touchstartTotalWidth, true);
 
 				}else{
+					//console.log("onTouchMove NORMAL", $this.touchLeft, event.originalEvent.touches[0].pageX, $this.touchstartx);
 					//normal
 					moveSlides($this.touchLeft, true);
 				}
 			}else{
-				trc("touch without touchMoveActive");
+				console.log("UNSTARTED onTouchMove");
 				onTouchStart(event);
 			}
-		};
-		//}, function(){}, 16, 16);
+		}, function(){
+			console.log("onTouchMove DELAY Callback");
+		}, 64, 64);
 
 
 		//end of touch - decide wether or not to change slide
-		var onTouchEnd = function(event){
+		var onTouchEnd = function onTouchEnd(event){
 			event.preventDefault();
+			//event.stopPropagation();
+			console.log("onTouchEnd", $slideSled.hasClass("noTrans"));
+			
 			$this.touchMoveActive = false;
 			$slideSled.removeClass("noTrans");
-			//
-			if($slideSled.position().left < ((-$this.touchstartWidth * activeSlide) + settings.pagingTouchLength) && activeSlide < totalSlides){
+
+			var touchLeft = $slideSled.position().left;
+			var slideLeft = -$this.touchstartWidth * activeSlide;
+
+			if(touchLeft < slideLeft  &&  touchLeft < (slideLeft + settings.pagingTouchLength) && activeSlide < totalSlides){
 				self.next();
-			}else if($slideSled.position().left > ((-$this.touchstartWidth * activeSlide) - settings.pagingTouchLength) && activeSlide > 0) {
+			}else if(touchLeft > slideLeft  &&  touchLeft > (slideLeft - settings.pagingTouchLength) && activeSlide > 0) {
 				self.prev();
 			}else{
 				self.reset();
@@ -235,6 +263,7 @@
 		};
 
 
+		//handle window resize
 		var onResize = self.util.throttle(function(){
 			initDimensions();
 		}, function(){
@@ -242,13 +271,14 @@
 		}, 16);
 
 
+		//init event bindings
 		var bindEvents = function bindEvents(){
 			//basic previous/next bindings
-			$this.on("click.mSwipe", ".mSwipe-next", self.next);
+			$this.on("click touch", ".mSwipe-next", self.next);
 			$this.on("click.mSwipe", ".mSwipe-prev", self.prev);
 
 			//touch bindings
-			$this.on("touchstart", ".mSwipe-sled > li", onTouchStart);
+			$this.on("touchstart.mSwipe", ".mSwipe-sled > li", onTouchStart);
 			$this.on("touchmove.mSwipe", ".mSwipe-sled > li", onTouchMove);
 			$this.on("touchend.mSwipe touchcancel.mSwipe touchleave.mSwipe", ".mSwipe-sled > li", onTouchEnd);
 
@@ -257,13 +287,14 @@
 		};
 
 
+		//initialize widget
 		initDimensions();
 		updateButtonState();
 		bindEvents();
 	};
 
 
-
+	//make mSwipeSlider available as jQuery plugin
 	$.fn.mSwipeSlider = function(methodOrOptions) {
 		return this.map(function(i, el){
 			var element = $(el);

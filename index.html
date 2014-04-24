@@ -8,50 +8,51 @@
 	<link href="./styles.css" rel="stylesheet"/>
 	<script src="./js/lib/modernizr-2.7.1-custom.js"></script>
 	<style>
-
 	/* Slider styles */
-	.mSwipe {
-		overflow: hidden;
-		/*height: 0;*/
-		position: relative;
-		-webkit-transform: translateZ(0);
-		-moz-transform: translateZ(0);
-		-ms-transform: translateZ(0);
-		-o-transform: translateZ(0);
-		transform: translateZ(0);
-	}
-	.mSwipe-sled {
-		overflow: hidden;
-		position: relative;
-		left:0;
-		margin: 0;
-		padding: 0;
-		/*switch easing from http://easings.net/*/
-		-webkit-transition: left 500ms cubic-bezier(0.39,0.575,0.565,1);
-		-moz-transition: left 500ms cubic-bezier(0.39,0.575,0.565,1);
-		transition: left 500ms cubic-bezier(0.39,0.575,0.565,1);
 
-		 /* Prevents Metro from swiping to the next tab or app. */
-		-ms-scroll-chaining: none;
+		.mSwipe {
+			overflow: hidden;
+			/* height: 0; */
+			position: relative;
+			-webkit-transform: translateZ(0);
+			-moz-transform: translateZ(0);
+			-ms-transform: translateZ(0);
+			-o-transform: translateZ(0);
+			transform: translateZ(0);
+		}
+		.mSwipe-sled {
+			overflow: hidden;
+			position: relative;
+			left:0;
+			margin: 0;
+			padding: 0;
+			/*
+				to switch easing check out http://easings.net/ 
+				Duration overwritten by JS setting
+			*/
+			-webkit-transition: left -webkit-transition cubic-bezier(0.39,0.575,0.565,1);
+			-moz-transition: left -moz-transition  cubic-bezier(0.39,0.575,0.565,1);
+			transition: left transform cubic-bezier(0.39,0.575,0.565,1);
 
-		-ms-scroll-snap-type: mandatory;
-		/* Forces a snap scroll behavior on your images. */
 
-		ms-scroll-snap-points-x: snapInterval(0%, 100%);
-		/* Defines the y and x intervals to snap to when scrolling. */
-	}
-	.mSwipe-sled.noTrans {
-		-webkit-transition: left 0;
-		-moz-transition:  left 0;
-		transition:  left 0;
-	}
-	.mSwipe-sled > li {
-		float:left;
-		list-style: none;
-		width:100%;
-		margin: 0;
-		padding: 0;
-	}
+			/*TODO: test on Win8 touch device*/
+			/* Prevents Metro from swiping to the next tab or app. */
+			-ms-scroll-chaining: none;
+			-ms-scroll-snap-type: mandatory; /* Forces a snap scroll behavior on your images. */
+			ms-scroll-snap-points-x: snapInterval(0%, 100%); /* Defines the y and x intervals to snap to when scrolling. */
+		}
+		.mSwipe-sled.noTrans {
+			-webkit-transition: left 0 -webkit-transform 0;
+			-moz-transition:  left 0 -moz-transition 0;
+			transition:  left 0 transform 0;
+		}
+		.mSwipe-sled > li {
+			float:left;
+			list-style: none;
+			width:100%;
+			margin: 0;
+			padding: 0;
+		}
 
 	/* END Slider styles */
 	</style>
@@ -61,14 +62,16 @@
 
 
 
-	<!-- view-source:http://hanshillen.github.io/jqtest/#goto_carousel -->
+	<!-- TODO: Accessible example: http://hanshillen.github.io/jqtest/#goto_carousel -->
 	<h1 id="carouselId1">mSwipeSlider Demo</h1>
 
-	<div id="demo-mSwipeSlider" aria-labelledby="carouselId1" style="max-width:500px; margin:0 auto;" class="mSwipe">
+	<button class="test" title="previous slide">Test</button>
+
+	<div id="demo-mSwipeSlider1" aria-labelledby="carouselId1" style="max-width:500px; margin:0 auto;" class="mSwipe">
 		<ul class="mSwipe-sled">
 			<li><h2>Test</h2><p>Eu</p></li>
 			<li><h2>Test 2</h2><p>Midge</p></li>
-			<li><h2>Test 3</h2><p>Tom<br/>and friends</p></li>
+			<li><h2>Test 3</h2><p>Tom<br/>and friends<br/>and more<br/>and more<br/>and more<br/>and more<br/>and more<br/>and more</p></li>
 			<li><h2>Test 4</h2><p>Durp</p></li>
 			<li><h2>Test 5</h2><p>Karim<br/>too</p></li>
 		</ul>
@@ -77,14 +80,14 @@
 		<button class="mSwipe-next" title="next slide">&rsaquo;</button>
 	</div>
 
-	<br/><br/>
+	<br/><br/><br/><br/>
 	<h1 id="carouselId2">mSwipeSlider Demo</h1>
 
 	<div id="demo-mSwipeSlider2" aria-labelledby="carouselId2" aria-role="complementary" style="max-width:500px; margin:0 auto;" class="mSwipe">
 		<ul class="mSwipe-sled">
 			<li><h2>Test</h2><p>Second Slider</p></li>
 			<li><h2>Test 2</h2><p>Second Slider Midge</p></li>
-			<li><h2>Test 3</h2><p>Second Slider Tom<br/>and friends</p></li>
+			<li><h2>Test 3</h2><p>Second Slider Tom<br/>and friends<br/>and more<br/>and more<br/>and more<br/>and more<br/>and more</p></li>
 			<li><h2>Test 4</h2><p>Second Slider Durp</p></li>
 			<li><h2>Test 5</h2><p>Second Slider Karim<br/>too</p></li>
 		</ul>
@@ -103,7 +106,7 @@
 	<script src="./js/lib/jquery.requestAnimationFrame.js"></script>
 	<script src="./jquery.m-swipe-slider.js"></script>
 	<script>
-		console.log($(".mSwipe").mSwipeSlider());
+		$(".mSwipe").mSwipeSlider();
 	</script>
 </body>
 </html>
