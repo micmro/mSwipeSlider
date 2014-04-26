@@ -14,10 +14,10 @@
 			$next = $this.find(".mSwipe-next"),
 			$prev = $this.find(".mSwipe-prev"),
 			settings = $.extend({
-				onTransitionStart : function() {},
-				onTransitionEnd : function() {},
+				// onTransitionStart : function() {},
+				// onTransitionEnd : function() {},
 				onFinishedSetup : function() {},
-				duration : 350,
+				duration : 250, //in ms (1000ms = 1sec)
 				pagingTouchLength : 100, //in px
 				supportsCsstransitions : !!(Modernizr||{}).csstransitions, //use Modernizer if available, but make it overwritable
 				supportsCsstransforms : !!(Modernizr||{}).csstransforms //use Modernizer if available, but make it overwritable
@@ -25,14 +25,18 @@
 
 
 		/*
+		TODO: Check:
 		http://www.webaxe.org/carousels-and-aria-tabs/
 		http://accessibility.athena-ict.com/aria/examples/carousel.shtml
+		http://www.audiusa.com/
+		
+		References:
+		http://www.paulirish.com/2012/why-moving-elements-with-translate-is-better-than-posabs-topleft/
 		*/
-		$slideSled.attr("aria-live", "polite").css({
-			"-webkit-transition-duration" : settings.duration + "ms",
-			"-moz-transition-duration" : settings.duration + "ms",
-			"transition-duration" : settings.duration + "ms"
-		});
+		$slideSled
+			.attr("aria-live", "polite")
+			.toggleClass("no-transition-support", !settings.supportsCsstransforms)
+			.css("transition-duration", settings.duration + "ms");
 
 		//helpers
 		self.util = {
@@ -66,7 +70,7 @@
 						resetCleanup();
 					}
 				};
-			}, 
+			},
 			easing : function easing(t){
 				return t*(2-t); 
 			}
@@ -77,7 +81,7 @@
 			totalSlides = $slides.length-1;
 
 		var initDimensions = function initDimensions(){
-			$slideSled.addClass("noTrans");
+			$slideSled.addClass("disable-transition");
 			//get highest element height
 			var maxHeight = Math.max.apply(null, $slides.map(function (){
 					return $(this).height();
@@ -94,33 +98,30 @@
 				height: maxHeight,
 				left : -outerWidth * activeSlide
 			});
-			$slideSled.removeClass("noTrans");
+			$slideSled.removeClass("disable-transition");
 		};
+
 
 		var transformOrLeftCssAttrite = function(leftPosition){
 			if(settings.supportsCsstransforms){
-				//-ms-transform:translate(0px,0px); /* IE 9 */
-				//-webkit-transform:translate(0px,0px);
 				return {"transform" : "translate("+leftPosition + "px, 0px)"};
 			}else{
 				return {"left" : leftPosition + "px"};
 			}
 		};
+
+
 		var moveSlides = function moveSlides(leftPosition, doNotAnimate){		
 			if(settings.supportsCsstransitions || doNotAnimate){
-				//$slideSled.css({"left" : leftPosition + "px"});
 				$slideSled.css(transformOrLeftCssAttrite(leftPosition));
-				//$slideSled[0].style.left = leftPosition + "px";
-
 			}else{
 				$slideSled.animate(transformOrLeftCssAttrite(leftPosition), {
 					duration : settings.duration,
 					queue : false,
-					start : function(){
-						
-						settings.onTransitionStart();
-					},
-					always : settings.onTransitionEnd
+					// start : function(){
+					// 	settings.onTransitionStart();
+					// },
+					// always : settings.onTransitionEnd
 				});
 			}
 		};
@@ -129,7 +130,6 @@
 		var updateButtonState = function updateButtonState(){
 			$this.toggleClass("firstSlide", (activeSlide == 0));
 			$prev.prop("disabled", (activeSlide == 0));
-
 			$this.toggleClass("lastSlide", (activeSlide == totalSlides));
 			$next.prop("disabled", (activeSlide == totalSlides));
 
@@ -196,15 +196,15 @@
 			$this.touchMoveActive = true;
 			$this.touchLeft = 0;
 
-			$slideSled.addClass("noTrans");
+			$slideSled.addClass("disable-transition");
 			console.log("onTouchStart");
 		};
 
 
 		//throttles slide repositioning based on finger
-		var xPos;
-		var yScrollDifference;
-		var onTouchMove = self.util.throttle(function onTouchMove(event){
+		var xPos, yScrollDifference;
+		var onTouchMove = function onTouchMove(event){
+		//var onTouchMove = self.util.throttle(function onTouchMove(event){
 			event.preventDefault();
 			event.stopPropagation();
 
@@ -236,19 +236,23 @@
 				console.log("UNSTARTED onTouchMove");
 				onTouchStart(event);
 			}
-		}, function(){
-			console.log("onTouchMove DELAY Callback");
-		}, 64, 64);
+		};
+		// }, function(){
+		// 	console.log("onTouchMove DELAY Callback");
+		// }, 32, 16);
 
 
 		//end of touch - decide wether or not to change slide
 		var onTouchEnd = function onTouchEnd(event){
+			if(!$this.touchMoveActive){
+				return;
+			}
 			event.preventDefault();
-			//event.stopPropagation();
-			console.log("onTouchEnd", $slideSled.hasClass("noTrans"));
+			event.stopPropagation();
 			
 			$this.touchMoveActive = false;
-			$slideSled.removeClass("noTrans");
+			$slideSled.removeClass("disable-transition");
+			console.log("onTouchEnd");
 
 			var touchLeft = $slideSled.position().left;
 			var slideLeft = -$this.touchstartWidth * activeSlide;
@@ -267,7 +271,7 @@
 		var onResize = self.util.throttle(function(){
 			initDimensions();
 		}, function(){
-			$slideSled.removeClass("noTrans");
+			//$slideSled.removeClass("disable-transition");
 		}, 16);
 
 
@@ -280,8 +284,8 @@
 			//touch bindings
 			$this.on("touchstart.mSwipe", ".mSwipe-sled > li", onTouchStart);
 			$this.on("touchmove.mSwipe", ".mSwipe-sled > li", onTouchMove);
+			//$this.on("mouseup", ".mSwipe-sled > li", onTouchEnd);
 			$this.on("touchend.mSwipe touchcancel.mSwipe touchleave.mSwipe", ".mSwipe-sled > li", onTouchEnd);
-
 			//change sizing of widget
 			$(window).on("resize.mSwipe", onResize);
 		};
@@ -291,6 +295,7 @@
 		initDimensions();
 		updateButtonState();
 		bindEvents();
+		settings.onFinishedSetup.apply(self, [self]);
 	};
 
 

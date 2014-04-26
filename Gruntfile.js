@@ -18,7 +18,7 @@ module.exports = function( grunt ) {
 			},
 			dist: {
 				files: {
-					'build/jquery.m-swipe.min.js': 'jquery.m-swipe.js'
+					'build/jquery.m-swipe-slider.min.js': 'jquery.m-swipe-slider.js'
 				}
 			}
 		},
