@@ -57,6 +57,8 @@
 			width:100%;
 			margin: 0;
 			padding: 0;
+			/*prevent text selection*/
+			user-select: none;
 		}
 
 	/* END Slider styles */
@@ -74,8 +76,8 @@
 	<div id="demo-mSwipeSlider1" aria-labelledby="carouselId1" style="max-width:500px; margin:0 auto;" class="mSwipe">
 		<ul class="mSwipe-sled">
 			<li><h2>Test</h2><p>Eu</p></li>
-			<li><h2>Test 2</h2><p>Midge</p></li>
-			<li><h2>Test 3</h2><p>Tom<br/>and friends<br/>and more<br/>and more<br/>and more<br/>and more<br/>and more<br/>and more</p></li>
+			<li><h2>Test 2</h2><p>Midge</p><p><a href="http://google.com">Test a link</a></p></li>
+			<li><h2>Test 3</h2><p>Tom<br/>and friends<br/><form action="http://google.com" method="get"><button type="submit" value="durp">Test</button></form><br/>and more<br/>and more<br/>and more<br/>and more<br/>and more</p></li>
 			<li><h2>Test 4</h2><p>Durp</p></li>
 			<li><h2>Test 5</h2><p>Karim<br/>too</p></li>
 		</ul>
@@ -84,7 +86,7 @@
 		<button class="mSwipe-next" title="next slide">&rsaquo;</button>
 	</div>
 
-<!-- 	<br/><br/><br/><br/>
+	<br/><br/><br/><br/>
 	<h1 id="carouselId2">mSwipeSlider Demo</h1>
 
 	<div id="demo-mSwipeSlider2" aria-labelledby="carouselId2" aria-role="complementary" style="max-width:500px; margin:0 auto;" class="mSwipe">
@@ -98,7 +100,7 @@
 
 		<button class="mSwipe-prev" title="previous slide">&lsaquo;</button>
 		<button class="mSwipe-next" title="next slide">&rsaquo;</button>
-	</div> -->
+	</div>
 
 
 	<div>

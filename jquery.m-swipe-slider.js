@@ -135,43 +135,38 @@
 
 			//set ARIA roles
 			$slideSled.children("li[aria-hidden!=true]").attr("aria-hidden", "true");
-			$slideSled.children("li").eq(activeSlide).attr({
-				"aria-hidden" : false
-			});
+			$slideSled.children("li").eq(activeSlide).attr({"aria-hidden" : false});
 		};
 
 
 		//public: move to previous slide
 		self.prev = function prev(){
-			console.log("prev");
 			if(activeSlide > 0){
 				activeSlide--;
 				moveSlides(-$this.width() * activeSlide);
 				updateButtonState();
 			}
-			//make this chainable 
+			//make method chainable 
 			return element;
 		};
 
 
 		//public: move to next slide
 		self.next = function next(){
-			console.log("next");
 			if(activeSlide < totalSlides){
 				activeSlide++;
 				moveSlides(-$this.width() * activeSlide);
 				updateButtonState();
 			}
-			//make this chainable 
+			//make method chainable 
 			return element;
 		};
 
 
 		//public: reset center to current slide
 		self.reset = function reset(){
-			console.log("reset");
 			moveSlides(-$this.width() * activeSlide);
-			//make this chainable 
+			//make method chainable 
 			return element;
 		};
 
@@ -184,20 +179,26 @@
 			return element;
 		};
 
-
-		//beginning of touch - setup of vars for touchmove
+		var pointSource;
+		//beginning of touch - setup of vars for touchmove 
 		var onTouchStart = function onTouchStart(event){
-			event.preventDefault();
-			$this.touchstartx =  event.originalEvent.touches[0].pageX;
-			$this.touchstartY =  event.originalEvent.touches[0].pageY;
-			$this.touchstartWidth = $this.width();
-			$this.touchstartTotalWidth = $this.touchstartWidth * totalSlides;
+			$this.useTouch = !!event.originalEvent.touches;
+			pointSource = ($this.useTouch) ? event.originalEvent.touches[0] : event.originalEvent;
+			console.log(event.originalEvent);
+			$this.pointerStartX = pointSource.pageX;
+			$this.pointerStartY = pointSource.pageY;
+			$this.pointerStartWidth = $this.width();
+			$this.pointerStartTotalWidth = $this.pointerStartWidth * totalSlides;
 
-			$this.touchMoveActive = true;
-			$this.touchLeft = 0;
+			$this.pointerMoveActive = true;
+			$this.pointerLeft = 0;
 
 			$slideSled.addClass("disable-transition");
-			console.log("onTouchStart");
+
+			//bind pointer events
+			$(document.body).on("touchmove.pointeractive.mSwipe mousemove.pointeractive.mSwipe", onTouchMove);
+			$(document.body).on("touchend.pointeractive.mSwipe touchcancel.pointeractive.mSwipe mouseup.pointeractive.mSwipe mouseleave.pointeractive.mSwipe", onTouchEnd);
+
 		};
 
 
@@ -205,61 +206,63 @@
 		var xPos, yScrollDifference;
 		var onTouchMove = function onTouchMove(event){
 		//var onTouchMove = self.util.throttle(function onTouchMove(event){
+
+			//safeguard
+			if($this.useTouch && !event.originalEvent.touches){
+				return
+			}
 			event.preventDefault();
 			event.stopPropagation();
 
+			pointSource = (event.originalEvent.touches) ? event.originalEvent.touches[0] : event.originalEvent;
 			//maintain vertical scroll functionality
-			yScrollDifference = event.originalEvent.touches[0].pageY - $this.touchstartY;
+			yScrollDifference = pointSource.pageY - $this.pointerStartY;
 			if(Math.abs(yScrollDifference) > 1){
 				scrollTo(scrollX, scrollY - yScrollDifference);
 			}
 			
-			if($this.touchMoveActive){
+			if($this.pointerMoveActive){
 				
-				$this.touchLeft = (-$this.touchstartWidth * activeSlide) - ($this.touchstartx - event.originalEvent.touches[0].pageX);
-				if($this.touchLeft > 0){
+				$this.pointerLeft = (-$this.pointerStartWidth * activeSlide) - ($this.pointerStartX - pointSource.pageX);
+				if($this.pointerLeft > 0){
 					//left end
-					xPos = $this.touchLeft/$this.touchstartWidth;
-					moveSlides(self.util.easing(xPos > 1 ? 1 : xPos) * ($this.touchstartWidth / 8), true);
+					xPos = $this.pointerLeft/$this.pointerStartWidth;
+					moveSlides(self.util.easing(xPos > 1 ? 1 : xPos) * ($this.pointerStartWidth / 8), true);
 
-				}else if(totalSlides == activeSlide && $this.touchstartTotalWidth < Math.abs($this.touchLeft)){
+				}else if(totalSlides == activeSlide && $this.pointerStartTotalWidth < Math.abs($this.pointerLeft)){
 					//right end
-					xPos = ($this.touchLeft + $this.touchstartTotalWidth) / -$this.touchstartWidth
-					moveSlides(-(self.util.easing(xPos > 1 ? 1 : xPos) * $this.touchstartWidth/8)-$this.touchstartTotalWidth, true);
+					xPos = ($this.pointerLeft + $this.pointerStartTotalWidth) / -$this.pointerStartWidth
+					moveSlides(-(self.util.easing(xPos > 1 ? 1 : xPos) * $this.pointerStartWidth/8)-$this.pointerStartTotalWidth, true);
 
 				}else{
-					//console.log("onTouchMove NORMAL", $this.touchLeft, event.originalEvent.touches[0].pageX, $this.touchstartx);
 					//normal
-					moveSlides($this.touchLeft, true);
+					moveSlides($this.pointerLeft, true);
 				}
 			}else{
-				console.log("UNSTARTED onTouchMove");
+				//init move
 				onTouchStart(event);
 			}
 		};
 		// }, function(){
-		// 	console.log("onTouchMove DELAY Callback");
 		// }, 32, 16);
 
 
 		//end of touch - decide wether or not to change slide
 		var onTouchEnd = function onTouchEnd(event){
-			if(!$this.touchMoveActive){
+			if(!$this.pointerMoveActive){
 				return;
 			}
-			event.preventDefault();
-			event.stopPropagation();
-			
-			$this.touchMoveActive = false;
+			//reset active related values 
+			$(document.body).off(".pointeractive");
+			$this.pointerMoveActive = false;
 			$slideSled.removeClass("disable-transition");
-			console.log("onTouchEnd");
-
+			
+			//decide if slide move is needed
 			var touchLeft = $slideSled.position().left;
-			var slideLeft = -$this.touchstartWidth * activeSlide;
-
-			if(touchLeft < slideLeft  &&  touchLeft < (slideLeft + settings.pagingTouchLength) && activeSlide < totalSlides){
+			var slideLeft = -$this.pointerStartWidth * activeSlide;
+			if(touchLeft < slideLeft && touchLeft < (slideLeft + settings.pagingTouchLength) && activeSlide < totalSlides){
 				self.next();
-			}else if(touchLeft > slideLeft  &&  touchLeft > (slideLeft - settings.pagingTouchLength) && activeSlide > 0) {
+			}else if(touchLeft > slideLeft && touchLeft > (slideLeft - settings.pagingTouchLength) && activeSlide > 0) {
 				self.prev();
 			}else{
 				self.reset();
@@ -271,31 +274,36 @@
 		var onResize = self.util.throttle(function(){
 			initDimensions();
 		}, function(){
-			//$slideSled.removeClass("disable-transition");
+			$slideSled.removeClass("disable-transition");
 		}, 16);
 
 
 		//init event bindings
 		var bindEvents = function bindEvents(){
 			//basic previous/next bindings
-			$this.on("click touch", ".mSwipe-next", self.next);
+			$this.on("click.mSwipe", ".mSwipe-next", self.next);
 			$this.on("click.mSwipe", ".mSwipe-prev", self.prev);
 
-			//touch bindings
-			$this.on("touchstart.mSwipe", ".mSwipe-sled > li", onTouchStart);
-			$this.on("touchmove.mSwipe", ".mSwipe-sled > li", onTouchMove);
-			//$this.on("mouseup", ".mSwipe-sled > li", onTouchEnd);
-			$this.on("touchend.mSwipe touchcancel.mSwipe touchleave.mSwipe", ".mSwipe-sled > li", onTouchEnd);
-			//change sizing of widget
+			//pointer event bindings
+			$this.on("touchstart.mSwipe mousedown.mSwipe", ".mSwipe-sled > li", onTouchStart);
+
+			//change size of widget
 			$(window).on("resize.mSwipe", onResize);
 		};
 
+		self.destroy = function(){
+			$this.off(".mSwipe");
+			$(window).off("resize.mSwipe", onResize);
+		}
 
-		//initialize widget
-		initDimensions();
-		updateButtonState();
-		bindEvents();
-		settings.onFinishedSetup.apply(self, [self]);
+
+		//initialize widget on "document ready"
+		$(function(){
+			initDimensions();
+			updateButtonState();
+			bindEvents();
+			settings.onFinishedSetup.apply(self, [self]);
+		});
 	};
 
 
