@@ -1,5 +1,6 @@
 /**
 * MSwipeSlider widget
+* created by Michael Mrowetz
 **/
 
 (function($, Modernizr){
