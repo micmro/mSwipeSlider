@@ -11,13 +11,14 @@
 
 		.mSwipe {
 			overflow: hidden;
+			width: 100%; 
 			/* height: 0; */
 			position: relative;
-/*			-webkit-transform: translateZ(0);
+			-webkit-transform: translateZ(0);
 			-moz-transform: translateZ(0);
 			-ms-transform: translateZ(0);
 			-o-transform: translateZ(0);
-			transform: translateZ(0);*/
+			transform: translateZ(0);
 		}
 		.mSwipe-sled {
 			margin: 0;
@@ -73,45 +74,32 @@
 
 
 	<!-- TODO: Accessible example: http://hanshillen.github.io/jqtest/#goto_carousel -->
-	<h1 id="carouselId1">mSwipeSlider Demo</h1>
+	<h1 id="carouselId1">m-swipe-slider Demo</h1>
 
 	<div id="demo-mSwipeSlider1" aria-labelledby="carouselId1" style="max-width:500px; margin:0 auto;" class="mSwipe">
 		<ul class="mSwipe-sled">
-			<li>
-				<h2>Test</h2><p>Eu</p>
+			<li class="slide-1">
+				<h2>m-swipe-slider</h2>
+				<p>Responsive, minimalistic (< 2kb gzipped), accessible, high performance slider</p>
 			</li>
-			<li>
-				<h2>Test 2</h2><p>Midge</p><p><a href="http://google.com">Test a link</a></p>
+			<li class="slide-2">
+				<h2>Links</h2>
+				<p>You can use <a href="http://google.com">links</a> on slides</p>
 			</li>
-			<li><h2>Test 3</h2>
+			<li class="slide-3">
+				<h2>Forms</h2>
 				<form action="http://google.com" method="get">
-					<button type="submit" value="durp">Test Form Submit</button>
+					<fieldset>
+						<legend>Forms do work as well</legend>
+						<button type="submit" value="durp">Submit to test</button>
+					</fieldset>
 				</form>
 			</li>
-			<li>
-				<h2>Test 4</h2>
+			<li class="slide-4">
+				<h2>More Text that reflows on resize</h2>
 				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ac velit mattis, molestie urna nec, ultrices elit. Ut feugiat turpis ac ligula scelerisque, quis faucibus ante fringilla.</p>
 				<p>Curabitur id fermentum dolor. Cras odio diam, cursus vitae vehicula porttitor, commodo vitae est. Donec tempor dolor erat, eget eleifend lacus mollis eu. Vivamus rutrum ante mi, in tincidunt diam blandit scelerisque. Integer volutpat ipsum vitae justo volutpat ultricies. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>
 			</li>
-			<li>
-				<h2>Test 5</h2><p>Karim<br/>too</p>
-			</li>
-		</ul>
-
-		<button class="mSwipe-prev" title="previous slide">&lsaquo;</button>
-		<button class="mSwipe-next" title="next slide">&rsaquo;</button>
-	</div>
-
-	<br/><br/><br/><br/>
-	<h1 id="carouselId2">mSwipeSlider Demo</h1>
-
-	<div id="demo-mSwipeSlider2" aria-labelledby="carouselId2" aria-role="complementary" style="max-width:500px; margin:0 auto;" class="mSwipe">
-		<ul class="mSwipe-sled">
-			<li><h2>Test</h2><p>Second Slider</p></li>
-			<li><h2>Test 2</h2><p>Second Slider Midge</p></li>
-			<li><h2>Test 3</h2><p>Second Slider Tom<br/>and friends<br/>and more<br/>and more<br/>and more<br/>and more<br/>and more</p></li>
-			<li><h2>Test 4</h2><p>Second Slider Durp</p></li>
-			<li><h2>Test 5</h2><p>Second Slider Karim<br/>too</p></li>
 		</ul>
 
 		<button class="mSwipe-prev" title="previous slide">&lsaquo;</button>
@@ -119,17 +107,14 @@
 	</div>
 
 
-	<div>
-		<h2>Support</h2>
-		<ul id="supportTrace"></ul>
-	</div>
 
-	<div style="height:150px; width:100%; background:#fcc;"></div>
+	<div style="margin:2em auto; height:250px; width:100%; background:#a47d53; color:2d2926">This is just a spacer to demo that you can still scroll over the slider</div>
 
 	<script src="./js/lib/jquery-1.11.0.min.js"></script>
 	<script src="./js/lib/jquery.requestAnimationFrame.js"></script>
 	<script src="./jquery.m-swipe-slider.js"></script>
 	<script>
+		//init all slider on the page
 		$(".mSwipe").mSwipeSlider();
 	</script>
 </body>

@@ -1,5 +1,6 @@
 /* additional styles to customize look and feel */
 
+/*baseline*/
 html,
 button,
 input,
@@ -13,10 +14,11 @@ body {
 }
 
 
+/*slider styling*/
 .mSwipe {max-width:500px; margin:0 auto; background: #ccc;}
 .mSwipe * {margin: 0; padding: 0; box-sizing:border-box; -moz-box-sizing:border-box;}
 .mSwipe-sled {background: #fcc;}
-.mSwipe-sled > li {background: #c55; padding: 1em 2em; cursor: move;}
+.mSwipe-sled > li {padding: 1em 2em; cursor: move;}
 
 .mSwipe-prev, .mSwipe-next {position: absolute; top: 50%; margin-top: -15px; line-height: 20px; padding: 10px 15px; border: solid 3px rgba(255,255,255,0.1); background: rgba(255,255,255,0.1); font-weight: bold; cursor: pointer; outline: 0; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; user-select: none;}
 .mSwipe-prev {left: 0; border-radius: 0 50% 50% 0;}
@@ -31,3 +33,14 @@ body {
 .mSwipe .mSwipe-prev, .mSwipe .mSwipe-prev:focus {border-left: 0;}
 
 .mSwipe.firstSlide .mSwipe-prev, .mSwipe.lastSlide .mSwipe-next, .mSwipe button:disabled {background:rgba(255,255,255,0.1); filter: alpha(opacity=50); opacity: 0.5;  cursor: default;}
+
+
+/*specific slide stying*/
+.mSwipe-sled > li > h2 {margin: 1em 0;}
+.slide-1 {background: #566189; color: #fff;}
+.slide-2 {background: #707b9a; color: #fff;}
+.slide-2 a {color: #ccc;}
+.slide-3 {background: #929aa6;}
+.slide-3 fieldset {padding: 1em;}
+.slide-3 button {padding: 0.5em;}
+.slide-4 {background: #a1a6ab;}

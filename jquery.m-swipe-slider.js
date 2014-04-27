@@ -21,7 +21,8 @@
 				supportsCsstransforms : !!(Modernizr||{}).csstransforms //use Modernizer if available, but make it overwritable
 			}, options ),
 			activeSlide = 0,
-			totalSlides = $slides.length-1;
+			totalSlides = $slides.length-1,
+			outerWidth;
 
 
 		/*
@@ -74,11 +75,12 @@
 		};
 
 
-		var maxHeight, outerWidth;
+		var maxHeight;
 		var initDimensions = function(){
 			$slideSled.addClass("disable-transition");
 
-			outerWidth = $this.width();
+			outerWidth = $this.outerWidth();
+
 			//reset height and height (for resize) - moved this out of maxHeight calculation to avoid triggering "Layout" and "Recalulate Style" for each node 
 			$slides.css({
 				width: outerWidth,
@@ -98,9 +100,13 @@
 				}, util.transformOrLeftCssAttrite(-outerWidth * activeSlide))
 			);
 
-			//hack to force layout so the "disable-transition" class is set after the transformOrLeftCssAttrite, else it will animate - this hack faster than a timeout hack
-			$slideSled.css("transition");
-			$slideSled.removeClass("disable-transition");	
+			//check if init initDimensions changed scrollbar
+			// nice side effect is that it will force layout so the "disable-transition" class is set after the transformOrLeftCssAttrite, else it will animate
+			if(outerWidth != $this.outerWidth()){
+				initDimensions();
+			}else{
+				$slideSled.removeClass("disable-transition");
+			}
 		};
 
 
@@ -136,7 +142,7 @@
 		self.prev = function(){
 			if(activeSlide > 0){
 				activeSlide--;
-				moveSlides(-$this.width() * activeSlide);
+				moveSlides(-outerWidth * activeSlide);
 				updateButtonState();
 			}
 			//make method chainable 
@@ -148,7 +154,7 @@
 		self.next = function(){
 			if(activeSlide < totalSlides){
 				activeSlide++;
-				moveSlides(-$this.width() * activeSlide);
+				moveSlides(-outerWidth * activeSlide);
 				updateButtonState();
 			}
 			//make method chainable 
@@ -158,7 +164,7 @@
 
 		//public: reset center to current slide
 		self.reset = function(){
-			moveSlides(-$this.width() * activeSlide);
+			moveSlides(-outerWidth * activeSlide);
 			//make method chainable 
 			return element;
 		};
@@ -171,6 +177,7 @@
 			initDimensions();
 			return element;
 		};
+
 
 		var pointSource;
 		//beginning of touch - setup of vars for touchmove 
@@ -276,10 +283,12 @@
 			$(window).on("resize.mSwipe", onResize);
 		};
 
+
 		self.destroy = function(){
-			$this.off(".mSwipe");
+			$this.off(".mSwipe")
 			$(window).off("resize.mSwipe", onResize);
-		}
+			$this.removeData("mSwipeSlider");
+		};
 
 
 		//initialize widget on "document ready" (or immediatly if called later)
@@ -287,7 +296,7 @@
 			initDimensions();
 			updateButtonState();
 			bindEvents();
-			settings.onFinishedSetup.apply(self, [self]);
+			settings.onFinishedSetup.apply($this, [self, $this.get(0)]);
 		});
 	};
 
