@@ -18,13 +18,16 @@ body {
 .mSwipe-sled {background: #fcc;}
 .mSwipe-sled > li {background: #c55; padding: 1em 2em; cursor: move;}
 
-.mSwipe-prev, .mSwipe-next {position: absolute; top: 50%; margin-top: -15px; line-height: 20px; padding: 10px 15px; border:0; background: rgba(255,255,255,0.1); font-weight: bold; cursor: pointer; outline: 0; -webkit-transition: background 0.1s;  -moz-transition: background 0.1s; transition: background 0.1s; -moz-transition: border 0.2s; transition: border 0.2s; -moz-transition: padding 0.2s; transition: padding 0.2s;}
+.mSwipe-prev, .mSwipe-next {position: absolute; top: 50%; margin-top: -15px; line-height: 20px; padding: 10px 15px; border: solid 3px rgba(255,255,255,0.1); background: rgba(255,255,255,0.1); font-weight: bold; cursor: pointer; outline: 0; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; user-select: none;}
 .mSwipe-prev {left: 0; border-radius: 0 50% 50% 0;}
 .mSwipe-next {right: 0; border-radius: 50% 0 0 50%;}
 
-.mSwipe button:hover {background: rgba(255,255,255,0.5); }
-.mSwipe button:focus {border: solid 3px #eee; margin-top: -18px;}
-.mSwipe .mSwipe-next:focus {border-right: 0;}
-.mSwipe .mSwipe-prev:focus {border-left: 0;}
+.mSwipe-prev:hover, .mSwipe-next:hover {background: rgba(255,255,255,0.5); }
+.mSwipe-prev:focus, .mSwipe-next:focus {border: solid 3px #eee;}
+
+.mSwipe-prev, .mSwipe-next, .mSwipe-prev:hover, .mSwipe-next:hover, .mSwipe-prev:focus, .mSwipe-next:focus {-webkit-transition: background border 1s;  -moz-transition: background border 1s; transition: background border 1s; /*-moz-transition: border 0.2s; transition: border 0.2s; -moz-transition: padding 0.2s; transition: padding 0.2s; */}
+
+.mSwipe .mSwipe-next, .mSwipe .mSwipe-next:focus {border-right: 0;}
+.mSwipe .mSwipe-prev, .mSwipe .mSwipe-prev:focus {border-left: 0;}
 
 .mSwipe.firstSlide .mSwipe-prev, .mSwipe.lastSlide .mSwipe-next, .mSwipe button:disabled {background:rgba(255,255,255,0.1); filter: alpha(opacity=50); opacity: 0.5;  cursor: default;}

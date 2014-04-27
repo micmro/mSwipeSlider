@@ -13,14 +13,13 @@
 			overflow: hidden;
 			/* height: 0; */
 			position: relative;
-			-webkit-transform: translateZ(0);
+/*			-webkit-transform: translateZ(0);
 			-moz-transform: translateZ(0);
 			-ms-transform: translateZ(0);
 			-o-transform: translateZ(0);
-			transform: translateZ(0);
+			transform: translateZ(0);*/
 		}
 		.mSwipe-sled {
-			overflow: hidden;
 			margin: 0;
 			padding: 0;
 			/*
@@ -58,7 +57,10 @@
 			margin: 0;
 			padding: 0;
 			/*prevent text selection*/
-			user-select: none;
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			-ms-user-select:none;
+			user-select:none;
 		}
 
 	/* END Slider styles */
@@ -75,11 +77,25 @@
 
 	<div id="demo-mSwipeSlider1" aria-labelledby="carouselId1" style="max-width:500px; margin:0 auto;" class="mSwipe">
 		<ul class="mSwipe-sled">
-			<li><h2>Test</h2><p>Eu</p></li>
-			<li><h2>Test 2</h2><p>Midge</p><p><a href="http://google.com">Test a link</a></p></li>
-			<li><h2>Test 3</h2><p>Tom<br/>and friends<br/><form action="http://google.com" method="get"><button type="submit" value="durp">Test</button></form><br/>and more<br/>and more<br/>and more<br/>and more<br/>and more</p></li>
-			<li><h2>Test 4</h2><p>Durp</p></li>
-			<li><h2>Test 5</h2><p>Karim<br/>too</p></li>
+			<li>
+				<h2>Test</h2><p>Eu</p>
+			</li>
+			<li>
+				<h2>Test 2</h2><p>Midge</p><p><a href="http://google.com">Test a link</a></p>
+			</li>
+			<li><h2>Test 3</h2>
+				<form action="http://google.com" method="get">
+					<button type="submit" value="durp">Test Form Submit</button>
+				</form>
+			</li>
+			<li>
+				<h2>Test 4</h2>
+				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ac velit mattis, molestie urna nec, ultrices elit. Ut feugiat turpis ac ligula scelerisque, quis faucibus ante fringilla.</p>
+				<p>Curabitur id fermentum dolor. Cras odio diam, cursus vitae vehicula porttitor, commodo vitae est. Donec tempor dolor erat, eget eleifend lacus mollis eu. Vivamus rutrum ante mi, in tincidunt diam blandit scelerisque. Integer volutpat ipsum vitae justo volutpat ultricies. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>
+			</li>
+			<li>
+				<h2>Test 5</h2><p>Karim<br/>too</p>
+			</li>
 		</ul>
 
 		<button class="mSwipe-prev" title="previous slide">&lsaquo;</button>
@@ -107,6 +123,8 @@
 		<h2>Support</h2>
 		<ul id="supportTrace"></ul>
 	</div>
+
+	<div style="height:150px; width:100%; background:#fcc;"></div>
 
 	<script src="./js/lib/jquery-1.11.0.min.js"></script>
 	<script src="./js/lib/jquery.requestAnimationFrame.js"></script>

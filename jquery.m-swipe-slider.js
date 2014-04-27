@@ -14,14 +14,14 @@
 			$next = $this.find(".mSwipe-next"),
 			$prev = $this.find(".mSwipe-prev"),
 			settings = $.extend({
-				// onTransitionStart : function() {},
-				// onTransitionEnd : function() {},
 				onFinishedSetup : function() {},
 				duration : 250, //in ms (1000ms = 1sec)
 				pagingTouchLength : 100, //in px
 				supportsCsstransitions : !!(Modernizr||{}).csstransitions, //use Modernizer if available, but make it overwritable
 				supportsCsstransforms : !!(Modernizr||{}).csstransforms //use Modernizer if available, but make it overwritable
-			}, options );
+			}, options ),
+			activeSlide = 0,
+			totalSlides = $slides.length-1;
 
 
 		/*
@@ -34,113 +34,106 @@
 		http://www.paulirish.com/2012/why-moving-elements-with-translate-is-better-than-posabs-topleft/
 		*/
 		$slideSled
-			.attr("aria-live", "polite")
+			.attr({"aria-live": "polite"
+			})
 			.toggleClass("no-transition-support", !settings.supportsCsstransforms)
 			.css("transition-duration", settings.duration + "ms");
 
 		//helpers
-		self.util = {
-			throttle : function throttle(fn, postFn, throttleFrequency, postFnDelay) {
-				var last, deferTimer, deferCleanupTimer;
+		var util = {
+			throttle : function(fn, throttleFrequency) {
+				var last, deferTimer, now, args;
 				throttleFrequency || (throttleFrequency = 50);
-				postFnDelay || (postFnDelay = throttleFrequency);
 
-				var resetCleanup = function(){
-					if(typeof postFn == "function"){
-						clearTimeout(deferTimer);
-						deferCleanupTimer = setTimeout(function(){
-							postFn.apply(self);
-						}, postFnDelay);
-					}
-				};
+				return function() {
+					now = +new Date;
+					args = arguments;
 
-				return function () {
-					var now = +new Date, args = arguments;
 					if (last && now < last + throttleFrequency) {
 						clearTimeout(deferTimer);
-						clearTimeout(deferCleanupTimer);
 						deferTimer = setTimeout(function () {
 							last = now;
 							fn.apply(self, args);
-							resetCleanup();
-						}, throttleFrequency);
+						}, throttleFrequency - (now - last));
 					} else {
 						last = now;
 						fn.apply(self, args);
-						resetCleanup();
 					}
 				};
 			},
-			easing : function easing(t){
+			easing : function(t){
 				return t*(2-t); 
+			},
+			transformOrLeftCssAttrite : function(leftPosition){
+				if(settings.supportsCsstransforms){
+					return {"transform" : "translate("+leftPosition + "px, 0px)"};
+				}else{
+					return {"left" : leftPosition + "px"};
+				}
 			}
 		};
 
 
-		var activeSlide = 0,
-			totalSlides = $slides.length-1;
-
-		var initDimensions = function initDimensions(){
+		var maxHeight, outerWidth;
+		var initDimensions = function(){
 			$slideSled.addClass("disable-transition");
-			//get highest element height
-			var maxHeight = Math.max.apply(null, $slides.map(function (){
-					return $(this).height();
-				}).get()),
-				outerWidth = $this.width();
 
-			$this.height(maxHeight);
+			outerWidth = $this.width();
+			//reset height and height (for resize) - moved this out of maxHeight calculation to avoid triggering "Layout" and "Recalulate Style" for each node 
 			$slides.css({
 				width: outerWidth,
-				height: maxHeight
+				height: "auto"
 			});
-			$slideSled.css({
-				width: outerWidth * (totalSlides+1) + "px",
-				height: maxHeight,
-				left : -outerWidth * activeSlide
-			});
-			$slideSled.removeClass("disable-transition");
+			//get highest element height
+			maxHeight = Math.max.apply(null, $slides.map(function(){
+				return $(this).outerHeight();
+			}).get());
+
+			$this.height(maxHeight);
+			$slides.css("height", maxHeight);
+
+			$slideSled.css($.extend({
+					width: outerWidth * (totalSlides+1) + "px",
+					height: maxHeight
+				}, util.transformOrLeftCssAttrite(-outerWidth * activeSlide))
+			);
+
+			//hack to force layout so the "disable-transition" class is set after the transformOrLeftCssAttrite, else it will animate - this hack faster than a timeout hack
+			$slideSled.css("transition");
+			$slideSled.removeClass("disable-transition");	
 		};
 
 
-		var transformOrLeftCssAttrite = function(leftPosition){
-			if(settings.supportsCsstransforms){
-				return {"transform" : "translate("+leftPosition + "px, 0px)"};
-			}else{
-				return {"left" : leftPosition + "px"};
-			}
-		};
-
-
-		var moveSlides = function moveSlides(leftPosition, doNotAnimate){		
+		var moveSlides = function(leftPosition, doNotAnimate){		
 			if(settings.supportsCsstransitions || doNotAnimate){
-				$slideSled.css(transformOrLeftCssAttrite(leftPosition));
+				$slideSled.css(util.transformOrLeftCssAttrite(leftPosition));
 			}else{
-				$slideSled.animate(transformOrLeftCssAttrite(leftPosition), {
+				$slideSled.animate(util.transformOrLeftCssAttrite(leftPosition), {
 					duration : settings.duration,
-					queue : false,
-					// start : function(){
-					// 	settings.onTransitionStart();
-					// },
-					// always : settings.onTransitionEnd
+					queue : false
 				});
 			}
 		};
 
 
-		var updateButtonState = function updateButtonState(){
+		var updateButtonState = function(){
 			$this.toggleClass("firstSlide", (activeSlide == 0));
 			$prev.prop("disabled", (activeSlide == 0));
 			$this.toggleClass("lastSlide", (activeSlide == totalSlides));
 			$next.prop("disabled", (activeSlide == totalSlides));
 
-			//set ARIA roles
-			$slideSled.children("li[aria-hidden!=true]").attr("aria-hidden", "true");
-			$slideSled.children("li").eq(activeSlide).attr({"aria-hidden" : false});
+			//set ARIA roles and tab settings
+			$slideSled
+				.children("li[aria-hidden!=true]").attr("aria-hidden", "true")
+				.find(":enabled[tabindex!=-1], a").attr("tabindex", "-1");
+			$slideSled
+				.children("li").eq(activeSlide).attr({"aria-hidden" : false})
+				.find("[tabindex=-1]").removeAttr("tabindex");
 		};
 
 
 		//public: move to previous slide
-		self.prev = function prev(){
+		self.prev = function(){
 			if(activeSlide > 0){
 				activeSlide--;
 				moveSlides(-$this.width() * activeSlide);
@@ -152,7 +145,7 @@
 
 
 		//public: move to next slide
-		self.next = function next(){
+		self.next = function(){
 			if(activeSlide < totalSlides){
 				activeSlide++;
 				moveSlides(-$this.width() * activeSlide);
@@ -164,7 +157,7 @@
 
 
 		//public: reset center to current slide
-		self.reset = function reset(){
+		self.reset = function(){
 			moveSlides(-$this.width() * activeSlide);
 			//make method chainable 
 			return element;
@@ -172,7 +165,7 @@
 
 
 		//public: method to refresh the slider
-		self.slideCountChanged = function slideCountChanged(){
+		self.slideCountChanged = function(){
 			$slides = $slideSled.children("li");
 			totalSlides = $slides.length-1;
 			initDimensions();
@@ -181,10 +174,9 @@
 
 		var pointSource;
 		//beginning of touch - setup of vars for touchmove 
-		var onTouchStart = function onTouchStart(event){
+		var onTouchStart = function(event){
 			$this.useTouch = !!event.originalEvent.touches;
 			pointSource = ($this.useTouch) ? event.originalEvent.touches[0] : event.originalEvent;
-			console.log(event.originalEvent);
 			$this.pointerStartX = pointSource.pageX;
 			$this.pointerStartY = pointSource.pageY;
 			$this.pointerStartWidth = $this.width();
@@ -202,10 +194,10 @@
 		};
 
 
-		//throttles slide repositioning based on finger
+		//slide repositioning based on finger - turns out it performs better without throtteling
 		var xPos, yScrollDifference;
-		var onTouchMove = function onTouchMove(event){
-		//var onTouchMove = self.util.throttle(function onTouchMove(event){
+		var onTouchMove = function(event){
+		//var onTouchMove = util.throttle(function onTouchMove(event){
 
 			//safeguard
 			if($this.useTouch && !event.originalEvent.touches){
@@ -214,41 +206,36 @@
 			event.preventDefault();
 			event.stopPropagation();
 
-			pointSource = (event.originalEvent.touches) ? event.originalEvent.touches[0] : event.originalEvent;
-			//maintain vertical scroll functionality
-			yScrollDifference = pointSource.pageY - $this.pointerStartY;
-			if(Math.abs(yScrollDifference) > 1){
-				scrollTo(scrollX, scrollY - yScrollDifference);
-			}
-			
 			if($this.pointerMoveActive){
+				pointSource = (event.originalEvent.touches) ? event.originalEvent.touches[0] : event.originalEvent;
+				//maintain vertical scroll functionality
+				yScrollDifference = pointSource.pageY - $this.pointerStartY;
+				if(Math.abs(yScrollDifference) > 1){
+					scrollTo(scrollX, scrollY - yScrollDifference);
+				}
 				
 				$this.pointerLeft = (-$this.pointerStartWidth * activeSlide) - ($this.pointerStartX - pointSource.pageX);
 				if($this.pointerLeft > 0){
 					//left end
 					xPos = $this.pointerLeft/$this.pointerStartWidth;
-					moveSlides(self.util.easing(xPos > 1 ? 1 : xPos) * ($this.pointerStartWidth / 8), true);
+					moveSlides(util.easing(xPos > 1 ? 1 : xPos) * ($this.pointerStartWidth / 8), true);
 
 				}else if(totalSlides == activeSlide && $this.pointerStartTotalWidth < Math.abs($this.pointerLeft)){
 					//right end
 					xPos = ($this.pointerLeft + $this.pointerStartTotalWidth) / -$this.pointerStartWidth
-					moveSlides(-(self.util.easing(xPos > 1 ? 1 : xPos) * $this.pointerStartWidth/8)-$this.pointerStartTotalWidth, true);
+					moveSlides(-(util.easing(xPos > 1 ? 1 : xPos) * $this.pointerStartWidth/8)-$this.pointerStartTotalWidth, true);
 
 				}else{
 					//normal
 					moveSlides($this.pointerLeft, true);
 				}
-			}else{
-				//init move
-				onTouchStart(event);
 			}
 		};
-		// }, function(){
-		// }, 32, 16);
+		//}, 16);
 
 
 		//end of touch - decide wether or not to change slide
-		var onTouchEnd = function onTouchEnd(event){
+		var onTouchEnd = function(event){
 			if(!$this.pointerMoveActive){
 				return;
 			}
@@ -271,15 +258,13 @@
 
 
 		//handle window resize
-		var onResize = self.util.throttle(function(){
+		var onResize = util.throttle(function(){
 			initDimensions();
-		}, function(){
-			$slideSled.removeClass("disable-transition");
 		}, 16);
 
 
 		//init event bindings
-		var bindEvents = function bindEvents(){
+		var bindEvents = function(){
 			//basic previous/next bindings
 			$this.on("click.mSwipe", ".mSwipe-next", self.next);
 			$this.on("click.mSwipe", ".mSwipe-prev", self.prev);
@@ -297,7 +282,7 @@
 		}
 
 
-		//initialize widget on "document ready"
+		//initialize widget on "document ready" (or immediatly if called later)
 		$(function(){
 			initDimensions();
 			updateButtonState();
