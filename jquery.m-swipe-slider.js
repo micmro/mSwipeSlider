@@ -183,6 +183,7 @@
 		var pointSource;
 		//beginning of touch - setup of vars for touchmove 
 		var onTouchStart = function(event){
+
 			$this.useTouch = !!event.originalEvent.touches;
 			pointSource = ($this.useTouch) ? event.originalEvent.touches[0] : event.originalEvent;
 			$this.pointerStartX = pointSource.pageX;
@@ -206,7 +207,6 @@
 		var xPos, yScrollDifference;
 		var onTouchMove = function(event){
 		//var onTouchMove = util.throttle(function onTouchMove(event){
-
 			//safeguard
 			if($this.useTouch && !event.originalEvent.touches){
 				return
@@ -218,8 +218,9 @@
 				pointSource = (event.originalEvent.touches) ? event.originalEvent.touches[0] : event.originalEvent;
 				//maintain vertical scroll functionality
 				yScrollDifference = pointSource.pageY - $this.pointerStartY;
+
 				if(Math.abs(yScrollDifference) > 1){
-					scrollTo(scrollX, scrollY - yScrollDifference);
+					scrollTo($(document).scrollLeft(), $(document).scrollTop() - yScrollDifference);
 				}
 				
 				$this.pointerLeft = (-$this.pointerStartWidth * activeSlide) - ($this.pointerStartX - pointSource.pageX);
