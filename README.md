@@ -3,10 +3,10 @@ MSwipeSlider
 
 Minimalist, responsive, touch enabled slider developed with performance in mind (size/responsiveness/battery).
 
-Features
-- small <2kb gzip
+*Features:*
+- small (<2kb gzip)
 - responsive (also handels reflows/resizes)
-- touch and mouse faux-touch pagination
+- touch and mouse faux-touch
 - GPU exelerated (via css transforms)
 
 Tested in Chrome, FF, IE8+, Opera, Android Chrome and iOS
@@ -23,11 +23,13 @@ Initializing MSwipeSlider with settings (all optional):
 
 ```JavaScript
 $(".mSwipe").mSwipeSlider({
-	onFinishedSetup : function(mSwipeSlider, el){console.log("ready captain", mSwipeSlider, el);}, //callback called when MSwipeSlider is initiallized
+	onFinishedSetup : function(mSwipeSlider, el){
+		console.log("ready captain", mSwipeSlider, el);
+	}, // callback executed when MSwipeSlider is initiallized
 	duration : 250, // animation duration for slide movement in ms (1000ms = 1sec)
 	pagingTouchLength : 200, // px length needed to move slide
-	supportsCsstransitions : true,
-	supportsCsstransforms : true
+	supportsCsstransitions : true, // overwrite Modernizr default
+	supportsCsstransforms : true // overwrite Modernizr default
 });
 ```
 

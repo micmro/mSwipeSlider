@@ -17,7 +17,7 @@
 			settings = $.extend({
 				onFinishedSetup : function() {},
 				duration : 250, //in ms (1000ms = 1sec)
-				pagingTouchLength : 100, //in px
+				pagingThreshhold : 100, //in px
 				supportsCsstransitions : !!(Modernizr||{}).csstransitions, //use Modernizer if available, but make it overwritable
 				supportsCsstransforms : !!(Modernizr||{}).csstransforms //use Modernizer if available, but make it overwritable
 			}, options ),
@@ -255,9 +255,9 @@
 			//decide if slide move is needed
 			var touchLeft = $slideSled.position().left;
 			var slideLeft = -$this.pointerStartWidth * activeSlide;
-			if(touchLeft < slideLeft && touchLeft < (slideLeft + settings.pagingTouchLength) && activeSlide < totalSlides){
+			if(touchLeft < slideLeft && touchLeft < (slideLeft - settings.pagingThreshhold) && activeSlide < totalSlides){
 				self.next();
-			}else if(touchLeft > slideLeft && touchLeft > (slideLeft - settings.pagingTouchLength) && activeSlide > 0) {
+			}else if(touchLeft > slideLeft && touchLeft > (slideLeft + settings.pagingThreshhold) && activeSlide > 0) {
 				self.prev();
 			}else{
 				self.reset();
