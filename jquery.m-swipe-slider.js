@@ -25,7 +25,6 @@
 			totalSlides = $slides.length-1,
 			outerWidth;
 
-
 		/*
 		TODO: Check:
 		http://www.webaxe.org/carousels-and-aria-tabs/
@@ -38,7 +37,7 @@
 		$slideSled
 			.attr({"aria-live": "polite"
 			})
-			.toggleClass("no-transition-support", !settings.supportsCsstransforms)
+			.toggleClass("no-transition-support", !settings.supportsCsstransitions)
 			.css("transition-duration", settings.duration + "ms");
 
 		//helpers
@@ -67,7 +66,7 @@
 				return t*(2-t); 
 			},
 			transformOrLeftCssAttrite : function(leftPosition){
-				if(settings.supportsCsstransforms){
+				if(settings.supportsCsstransforms && settings.supportsCsstransitions){
 					return {"transform" : "translate("+leftPosition + "px, 0px)"};
 				}else{
 					return {"left" : leftPosition + "px"};
@@ -111,18 +110,6 @@
 		};
 
 
-		var moveSlides = function(leftPosition, doNotAnimate){		
-			if(settings.supportsCsstransitions || doNotAnimate){
-				$slideSled.css(util.transformOrLeftCssAttrite(leftPosition));
-			}else{
-				$slideSled.animate(util.transformOrLeftCssAttrite(leftPosition), {
-					duration : settings.duration,
-					queue : false
-				});
-			}
-		};
-
-
 		var updateButtonState = function(){
 			$this.toggleClass("firstSlide", (activeSlide == 0));
 			$prev.prop("disabled", (activeSlide == 0));
@@ -139,53 +126,23 @@
 		};
 
 
-		//public: move to previous slide
-		self.prev = function(){
-			if(activeSlide > 0){
-				activeSlide--;
-				moveSlides(-outerWidth * activeSlide);
-				updateButtonState();
+		var moveSlides = function(leftPosition, doNotAnimate){
+			if(settings.supportsCsstransitions || doNotAnimate){
+				$slideSled.css(util.transformOrLeftCssAttrite(leftPosition));
+			}else{
+				$slideSled.animate(util.transformOrLeftCssAttrite(leftPosition), {
+						duration : settings.duration,
+						queue : false
+					});
 			}
-			//make method chainable 
-			return element;
-		};
-
-
-		//public: move to next slide
-		self.next = function(){
-			if(activeSlide < totalSlides){
-				activeSlide++;
-				moveSlides(-outerWidth * activeSlide);
-				updateButtonState();
-			}
-			//make method chainable 
-			return element;
-		};
-
-
-		//public: reset center to current slide
-		self.reset = function(){
-			moveSlides(-outerWidth * activeSlide);
-			//make method chainable 
-			return element;
-		};
-
-
-		//public: method to refresh the slider
-		self.slideCountChanged = function(){
-			$slides = $slideSled.children("li");
-			totalSlides = $slides.length-1;
-			initDimensions();
-			return element;
 		};
 
 
 		var pointSource;
 		//beginning of touch - setup of vars for touchmove 
 		var onTouchStart = function(event){
-
 			$this.useTouch = !!event.originalEvent.touches;
-			pointSource = ($this.useTouch) ? event.originalEvent.touches[0] : event.originalEvent;
+			pointSource = ($this.useTouch) ? event.originalEvent.touches[0] : event;
 			$this.pointerStartX = pointSource.pageX;
 			$this.pointerStartY = pointSource.pageY;
 			$this.pointerStartWidth = $this.width();
@@ -199,7 +156,6 @@
 			//bind pointer events
 			$(document.body).on("touchmove.pointeractive.mSwipe mousemove.pointeractive.mSwipe", onTouchMove);
 			$(document.body).on("touchend.pointeractive.mSwipe touchcancel.pointeractive.mSwipe mouseup.pointeractive.mSwipe mouseleave.pointeractive.mSwipe", onTouchEnd);
-
 		};
 
 
@@ -209,13 +165,12 @@
 		//var onTouchMove = util.throttle(function onTouchMove(event){
 			//safeguard
 			if($this.useTouch && !event.originalEvent.touches){
-				return
+				return;
 			}
 			event.preventDefault();
 			event.stopPropagation();
-
 			if($this.pointerMoveActive){
-				pointSource = (event.originalEvent.touches) ? event.originalEvent.touches[0] : event.originalEvent;
+				pointSource = (event.originalEvent.touches) ? event.originalEvent.touches[0] : event;
 				//maintain vertical scroll functionality
 				yScrollDifference = pointSource.pageY - $this.pointerStartY;
 
@@ -224,6 +179,7 @@
 				}
 				
 				$this.pointerLeft = (-$this.pointerStartWidth * activeSlide) - ($this.pointerStartX - pointSource.pageX);
+
 				if($this.pointerLeft > 0){
 					//left end
 					xPos = $this.pointerLeft/$this.pointerStartWidth;
@@ -286,6 +242,51 @@
 		};
 
 
+
+
+
+		//public: move to previous slide
+		self.prev = function(){
+			if(activeSlide > 0){
+				activeSlide--;
+				moveSlides(-outerWidth * activeSlide);
+				updateButtonState();
+			}
+			//make method chainable 
+			return element;
+		};
+
+
+		//public: move to next slide
+		self.next = function(){
+			if(activeSlide < totalSlides){
+				activeSlide++;
+				moveSlides(-outerWidth * activeSlide);
+				updateButtonState();
+			}
+			//make method chainable 
+			return element;
+		};
+
+
+		//public: reset center to current slide
+		self.reset = function(){
+			moveSlides(-outerWidth * activeSlide);
+			//make method chainable 
+			return element;
+		};
+
+
+		//public: method to refresh the slider
+		self.slideCountChanged = function(){
+			$slides = $slideSled.children("li");
+			totalSlides = $slides.length-1;
+			initDimensions();
+			return element;
+		};
+
+		
+		//public: destroy widget
 		self.destroy = function(){
 			$this.off(".mSwipe")
 			$(window).off("resize.mSwipe", onResize);
