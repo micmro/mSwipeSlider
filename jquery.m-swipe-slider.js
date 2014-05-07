@@ -3,7 +3,16 @@
 * created by Michael Mrowetz
 **/
 
-(function($, Modernizr){
+//UMD (Universal Module Definition) setup to work with AMD and CommonJS
+(function(factory) {
+	if(typeof define === "function" && define.amd) {
+		// AMD. Register as an anonymous module.
+		define(["jquery"], factory);
+	} else {
+		// Browser globals
+		factory(jQuery);
+	}
+}(function($) {
 	"use strict";
 
 	var MSwipeSlider = function(element, options) {
@@ -50,7 +59,7 @@
 					now = +new Date;
 					args = arguments;
 
-					if (last && now < last + throttleFrequency) {
+					if(last && now < last + throttleFrequency) {
 						clearTimeout(deferTimer);
 						deferTimer = setTimeout(function () {
 							last = now;
@@ -304,6 +313,8 @@
 	};
 
 
+
+
 	//make mSwipeSlider available as jQuery plugin
 	$.fn.mSwipeSlider = function(methodOrOptions) {
 		return this.map(function(i, el){
@@ -311,14 +322,17 @@
 			var mSwipeSliderInstance = element.data("mSwipeSlider");
 
 			// Return early if this element already has a plugin instance
-			if (!mSwipeSliderInstance) {
+			if(!mSwipeSliderInstance) {
 				// Instanciate and store MSwipeSlider object in this element's data
 				element.data("mSwipeSlider", new MSwipeSlider(this, methodOrOptions));
 			}else if(mSwipeSliderInstance[methodOrOptions]){
-				return mSwipeSliderInstance[methodOrOptions].apply( this, Array.prototype.slice.call( arguments, 1 ));			
+				return mSwipeSliderInstance[methodOrOptions].apply(this, Array.prototype.slice.call( arguments, 1 ));			
 			}
 			return el;
 		});
 	};
 
-})(jQuery, window.Modernizr);
+	//return play constructor to be used in modules
+	return MSwipeSlider;
+
+}));
