@@ -30,14 +30,6 @@
 			-webkit-transition: -webkit-transform 1s cubic-bezier(0.39,0.575,0.565,1);
 			-moz-transition: -moz-transform 1s  cubic-bezier(0.39,0.575,0.565,1);
 			transition: transform 1s cubic-bezier(0.39,0.575,0.565,1);
-
-
-			/*TODO: test on Win8 touch device*/
-			/* Prevents Metro from swiping to the next tab or app. */
-			/*-ms-scroll-chaining: none;
-			-ms-scroll-snap-type: mandatory;  Forces a snap scroll behavior on your images. 
-			ms-scroll-snap-points-x: snapInterval(0%, 100%); */
-			/* Defines the y and x intervals to snap to when scrolling. */
 		}
 		.mSwipe-sled.no-transition-support {
 			position: relative;
@@ -60,7 +52,6 @@
 			-ms-user-select:none;
 			user-select:none;
 		}
-
 		.visually-hidden { 
 			position: absolute; 
 			overflow: hidden; 
@@ -75,13 +66,10 @@
 
 </head>
 <body>
-
-
-
-	<!-- TODO: Accessible example: http://hanshillen.github.io/jqtest/#goto_carousel -->
 	<h1>MSwipeSlider Demo</h1>
 
-	<div id="mSwipeSlider1" role="complementary" style="max-width:500px; margin:0 auto;" class="mSwipe">
+	<!-- start  MSwipeSlider -->
+	<div id="mSwipeSlider1" role="complementary" class="mSwipe">
 		<ul class="mSwipe-sled">
 			<li class="slide-1" role="tabpanel" data-btn-aria-label="MSwipeSlider Descriptions">
 				<h2>MSwipeSlider</h2>
@@ -110,7 +98,7 @@
 		<button class="mSwipe-prev" title="previous slide">&lsaquo;</button>
 		<button class="mSwipe-next" title="next slide">&rsaquo;</button>
 	</div>
-
+	<!-- end  MSwipeSlider -->
 
 
 	<section style="margin:2em auto; height:250px; width:100%; background:#a47d53; color:2d2926">This is just a spacer to demo that you can still scroll over the slider</section>
