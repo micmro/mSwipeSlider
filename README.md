@@ -8,8 +8,11 @@ Minimalist, responsive, touch enabled slider developed with performance in mind 
 - responsive (also handels reflows/resizes)
 - touch and mouse faux-touch
 - GPU exelerated (via css transforms)
+- AMD/CommonJS/jQueryPlugin support
 
 Tested in Chrome, FF, IE8+, Opera, Android Chrome and iOS
+
+Depending on jQuery and soft dependency on Modernizr for feature detection that can be overwritten through `supportsCsstransitions` and `supportsCsstransforms`
 
 
 Demo
