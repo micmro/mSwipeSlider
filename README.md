@@ -4,10 +4,10 @@ MSwipeSlider
 Minimalist, responsive, touch enabled slider developed with performance in mind (size/responsiveness/battery).
 
 *Features:*
-- small (<2kb gzip)
-- responsive (also handels reflows/resizes)
+- small _(<2kb gzip)_
+- responsive _(also handels reflows/resizes)_
 - touch and mouse faux-touch
-- GPU exelerated (via CSS transforms)
+- GPU exelerated _(via CSS transforms)_
 - AMD/CommonJS/jQueryPlugin support
 
 Tested in Chrome, FF, IE8+, Opera, Android Chrome and iOS
