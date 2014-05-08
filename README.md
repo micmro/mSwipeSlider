@@ -7,7 +7,7 @@ Minimalist, responsive, touch enabled slider developed with performance in mind 
 - small (<2kb gzip)
 - responsive (also handels reflows/resizes)
 - touch and mouse faux-touch
-- GPU exelerated (via css transforms)
+- GPU exelerated (via CSS transforms)
 - AMD/CommonJS/jQueryPlugin support
 
 Tested in Chrome, FF, IE8+, Opera, Android Chrome and iOS
@@ -26,13 +26,13 @@ Initializing MSwipeSlider with settings (all optional):
 
 ```JavaScript
 $(".mSwipe").mSwipeSlider({
-	onFinishedSetup : function(mSwipeSlider, el){
-		console.log("ready captain", mSwipeSlider, el);
-	}, // callback executed when MSwipeSlider is initiallized
-	duration : 250, // animation duration for slide movement in ms (1000ms = 1sec)
-	pagingTouchLength : 200, // px length needed to move slide
-	supportsCsstransitions : true, // overwrite Modernizr default
-	supportsCsstransforms : true // overwrite Modernizr default
+    onFinishedSetup : function(mSwipeSlider, el){
+        console.log("ready captain", mSwipeSlider, el);
+    }, // callback executed when MSwipeSlider is initiallized
+    duration : 250, // animation duration for slide movement in ms (1000ms = 1sec)
+    pagingTouchLength : 200, // px length needed to move slide
+    supportsCsstransitions : true, // overwrite Modernizr default
+    supportsCsstransforms : true // overwrite Modernizr default
 });
 ```
 
@@ -45,9 +45,9 @@ To work on the slider leveraging a static file server and automatic reload or to
 
 - Install grunt
  ```
- npm install -g grunt-cli
+     npm install -g grunt-cli
  ```
 - cd into directory and 
  ```
- grunt
+     grunt
  ```
