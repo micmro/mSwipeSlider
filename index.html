@@ -61,6 +61,14 @@
 			user-select:none;
 		}
 
+		.visually-hidden { 
+			position: absolute; 
+			overflow: hidden; 
+			clip: rect(0 0 0 0); 
+			height: 1px; width: 1px; 
+			margin: -1px; padding: 0; border: 0; 
+		}
+
 	/* END Slider styles */
 	</style>
 	<link href="./styles.css" rel="stylesheet"/>
@@ -71,19 +79,19 @@
 
 
 	<!-- TODO: Accessible example: http://hanshillen.github.io/jqtest/#goto_carousel -->
-	<h1 id="carouselId1">MSwipeSlider Demo</h1>
+	<h1>MSwipeSlider Demo</h1>
 
-	<div id="demo-mSwipeSlider1" aria-labelledby="carouselId1" style="max-width:500px; margin:0 auto;" class="mSwipe">
+	<div id="mSwipeSlider1" role="complementary" style="max-width:500px; margin:0 auto;" class="mSwipe">
 		<ul class="mSwipe-sled">
-			<li class="slide-1">
+			<li class="slide-1" role="tabpanel" data-btn-aria-label="MSwipeSlider Descriptions">
 				<h2>MSwipeSlider</h2>
 				<p>Responsive, minimalistic (< 2kb gzipped), accessible, high performance slider</p>
 			</li>
-			<li class="slide-2">
+			<li class="slide-2" role="tabpanel" data-btn-aria-label="Links Implementation Example">
 				<h2>Links</h2>
 				<p>You can use <a href="http://google.com">links</a> on slides</p>
 			</li>
-			<li class="slide-3">
+			<li class="slide-3" role="tabpanel" data-btn-aria-label="Forms Example">
 				<h2>Forms</h2>
 				<form action="http://google.com" method="get">
 					<fieldset>
@@ -92,7 +100,7 @@
 					</fieldset>
 				</form>
 			</li>
-			<li class="slide-4">
+			<li role="tabpanel" data-btn-aria-label="Large Text Example" class="slide-4">
 				<h2>More Text that reflows on resize</h2>
 				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ac velit mattis, molestie urna nec, ultrices elit. Ut feugiat turpis ac ligula scelerisque, quis faucibus ante fringilla.</p>
 				<p>Curabitur id fermentum dolor. Cras odio diam, cursus vitae vehicula porttitor, commodo vitae est. Donec tempor dolor erat, eget eleifend lacus mollis eu. Vivamus rutrum ante mi, in tincidunt diam blandit scelerisque. Integer volutpat ipsum vitae justo volutpat ultricies. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>
@@ -105,7 +113,7 @@
 
 
 
-	<div style="margin:2em auto; height:250px; width:100%; background:#a47d53; color:2d2926">This is just a spacer to demo that you can still scroll over the slider</div>
+	<section style="margin:2em auto; height:250px; width:100%; background:#a47d53; color:2d2926">This is just a spacer to demo that you can still scroll over the slider</section>
 
 	<script src="./js/lib/jquery-1.11.0.min.js"></script>
 	<script src="./js/lib/jquery.requestAnimationFrame.js"></script>

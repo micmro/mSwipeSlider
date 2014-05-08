@@ -15,12 +15,12 @@
 }(function($) {
 	"use strict";
 
+	//single instance constructor that's returned via the factory and added as multi-instance jQuery plugin
 	var MSwipeSlider = function(element, options) {
 
 		var self = this,
 			$this = $(element),
 			$slideSled = $this.children(".mSwipe-sled"),
-			$slides = $slideSled.children("li"),
 			$next = $this.find(".mSwipe-next"),
 			$prev = $this.find(".mSwipe-prev"),
 			settings = $.extend({
@@ -31,23 +31,22 @@
 				supportsCsstransforms : !!(Modernizr||{}).csstransforms //use Modernizer if available, but make it overwritable
 			}, options ),
 			activeSlide = 0,
-			totalSlides = $slides.length-1,
-			outerWidth;
+			accessibeTitleId = ($this.attr("id") || "m-swipe-slider") + "-accessible-title",
+			accessibeTitle = $("<h1 id=\"" + accessibeTitleId + "\" class=\"visually-hidden\">"),
+			$slides, totalSlides, outerWidth;
 
-		/*
-		TODO: Check:
-		http://www.webaxe.org/carousels-and-aria-tabs/
-		http://accessibility.athena-ict.com/aria/examples/carousel.shtml
-		http://www.audiusa.com/
-		
-		References:
-		http://www.paulirish.com/2012/why-moving-elements-with-translate-is-better-than-posabs-topleft/
-		*/
+
+
+		//set initial settings
+		$this.prepend(accessibeTitle);
 		$slideSled
-			.attr({"aria-live": "polite"
+			.attr({
+				"aria-live": "polite",
+				"aria-labelledby": accessibeTitleId
 			})
 			.toggleClass("no-transition-support", !settings.supportsCsstransitions)
 			.css("transition-duration", settings.duration + "ms");
+		$next.add($prev).attr("role", "tab");
 
 		//helpers
 		var util = {
@@ -81,6 +80,16 @@
 					return {"left" : leftPosition + "px"};
 				}
 			}
+		};
+
+
+		var init = function(){
+			$slides = $slideSled.children("li");
+			totalSlides = $slides.length-1;
+			accessibeTitle.text($.map($slides, function(el){
+				return $(el).attr("data-btn-aria-label")
+			}).join(","));
+			initDimensions();
 		};
 
 
@@ -118,23 +127,37 @@
 			}
 		};
 
-
-		var updateButtonState = function(){
+		//Set next/prev button and accessible setting state
+		var updateUiState = function(){
 			$this.toggleClass("firstSlide", (activeSlide == 0));
-			$prev.prop("disabled", (activeSlide == 0));
+			$prev.attr({
+				"disabled": (activeSlide == 0),
+				"aria-hidden": (activeSlide == 0),
+				"aria-label": (activeSlide-1 >= 0) ? ($slides.eq(activeSlide-1).attr("data-btn-aria-label") || $prev.attr("title")) : ""
+			});
 			$this.toggleClass("lastSlide", (activeSlide == totalSlides));
-			$next.prop("disabled", (activeSlide == totalSlides));
+			$next.attr({
+				"disabled": (activeSlide == totalSlides),
+				"aria-hidden": (activeSlide == totalSlides),
+				"aria-label": (activeSlide+1 <= totalSlides) ? ($slides.eq(activeSlide+1).attr("data-btn-aria-label") || $next.attr("title")) : ""
+			});
 
 			//set ARIA roles and tab settings
-			$slideSled
-				.children("li[aria-hidden!=true]").attr("aria-hidden", "true")
+			$slides.filter("[aria-hidden!=true]")
+				.attr({
+					"aria-hidden": true,
+					"aria-expanded" : false
+				})
 				.find(":enabled[tabindex!=-1], a").attr("tabindex", "-1");
-			$slideSled
-				.children("li").eq(activeSlide).attr({"aria-hidden" : false})
+			$slides.eq(activeSlide)
+				.attr({
+					"aria-hidden": false,
+					"aria-expanded" : true
+				})
 				.find("[tabindex=-1]").removeAttr("tabindex");
 		};
 
-
+		//move slide to pixel position
 		var moveSlides = function(leftPosition, doNotAnimate){
 			if(settings.supportsCsstransitions || doNotAnimate){
 				$slideSled.css(util.transformOrLeftCssAttrite(leftPosition));
@@ -168,10 +191,9 @@
 		};
 
 
-		//slide repositioning based on finger - turns out it performs better without throtteling
 		var xPos, yScrollDifference;
+		//slide repositioning based on finger - turns out it performs better without throtteling
 		var onTouchMove = function(event){
-		//var onTouchMove = util.throttle(function onTouchMove(event){
 			//safeguard
 			if($this.useTouch && !event.originalEvent.touches){
 				return;
@@ -205,7 +227,6 @@
 				}
 			}
 		};
-		//}, 16);
 
 
 		//end of touch - decide wether or not to change slide
@@ -231,7 +252,7 @@
 		};
 
 
-		//handle window resize
+		//handle window resize (but trottle it)
 		var onResize = util.throttle(function(){
 			initDimensions();
 		}, 16);
@@ -251,15 +272,12 @@
 		};
 
 
-
-
-
 		//public: move to previous slide
 		self.prev = function(){
 			if(activeSlide > 0){
 				activeSlide--;
 				moveSlides(-outerWidth * activeSlide);
-				updateButtonState();
+				updateUiState();
 			}
 			//make method chainable 
 			return element;
@@ -271,7 +289,7 @@
 			if(activeSlide < totalSlides){
 				activeSlide++;
 				moveSlides(-outerWidth * activeSlide);
-				updateButtonState();
+				updateUiState();
 			}
 			//make method chainable 
 			return element;
@@ -288,9 +306,7 @@
 
 		//public: method to refresh the slider
 		self.slideCountChanged = function(){
-			$slides = $slideSled.children("li");
-			totalSlides = $slides.length-1;
-			initDimensions();
+			init();
 			return element;
 		};
 
@@ -305,8 +321,8 @@
 
 		//initialize widget on "document ready" (or immediatly if called later)
 		$(function(){
-			initDimensions();
-			updateButtonState();
+			init();
+			updateUiState();
 			bindEvents();
 			settings.onFinishedSetup.apply($this, [self, $this.get(0)]);
 		});
