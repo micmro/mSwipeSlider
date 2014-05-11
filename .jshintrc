@@ -1,0 +1,13 @@
+{
+    // Settings
+    "passfail"      : false,  // Stop on first error.
+    "maxerr"        : 100,    // Maximum error before stopping.
+
+    "jquery"        : true,
+
+    "strict"        : false,  // Require `use strict` pragma  in every file.
+    "globalstrict"  : false,  // Allow global "use strict" (also enables 'strict').
+    "curly"			: true,
+    "indent"		: 4,
+    "trailing"		: false
+}

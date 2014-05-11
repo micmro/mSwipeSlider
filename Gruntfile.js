@@ -1,6 +1,5 @@
 /*global module */
 
-
 module.exports = function( grunt ) {
 	"use strict";
 
@@ -25,13 +24,26 @@ module.exports = function( grunt ) {
 
 		watch: {
 			loadFiles: {
-				files: ['index.html','*.js','*.css']
+					files: ['index.html', '*.js', '*.css', '.jshintrc']
 			},
 			options: {
 				// default port is 35729
 				livereload: 1337,
 			},
-			//tasks: ['jshint'],
+			scripts: {
+				files: ['**/*.js'],
+				tasks: ['jshint'],
+				options: {
+					spawn: false,
+				},
+			},
+		},
+
+		jshint: {
+			all: ['jquery.m-swipe-slider.js', 'Gruntfile.js'],
+			options: {
+				jshintrc: true,
+			},
 		},
 
 		// grunt-contrib-connect will serve the files of the project
@@ -46,9 +58,9 @@ module.exports = function( grunt ) {
 							require('connect-livereload')({
 								port: grunt.config.get("watch.options.livereload")
 								// ignore: ['Gruntfile.js']
-							})
+							}),
 							// Serve the project folder
-							,connect.static(options.base)
+							connect.static(options.base)
 						];
 					}
 				}			
@@ -65,11 +77,12 @@ module.exports = function( grunt ) {
 	// build
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-connect');
+	grunt.loadNpmTasks('grunt-contrib-jshint');
 
 
-	grunt.registerTask('build', 'uglify');
+	grunt.registerTask('build', 'jshint', 'uglify');
 
 	// dev server / auto reload
-	grunt.registerTask('dev', ['connect', 'open', 'watch']);
+	grunt.registerTask('dev', ['connect', 'jshint', 'open', 'watch']);
 	grunt.registerTask('default', 'dev');
 };

@@ -27,8 +27,8 @@
 				onFinishedSetup : function() {},
 				duration : 250, //in ms (1000ms = 1sec)
 				pagingThreshhold : 100, //in px
-				supportsCsstransitions : !!(Modernizr||{}).csstransitions, //use Modernizer if available, but make it overwritable
-				supportsCsstransforms : !!(Modernizr||{}).csstransforms //use Modernizer if available, but make it overwritable
+				supportsCsstransitions : !!(Modernizr || {}).csstransitions, //use Modernizer if available, but make it overwritable
+				supportsCsstransforms : !!(Modernizr || {}).csstransforms //use Modernizer if available, but make it overwritable
 			}, options ),
 			activeSlide = 0,
 			accessibeTitleId = ($this.attr("id") || "m-swipe-slider") + "-accessible-title",
@@ -52,10 +52,10 @@
 		var util = {
 			throttle : function(fn, throttleFrequency) {
 				var last, deferTimer, now, args;
-				throttleFrequency || (throttleFrequency = 50);
+				throttleFrequency = throttleFrequency || 50;
 
 				return function() {
-					now = +new Date;
+					now = +new Date();
 					args = arguments;
 
 					if(last && now < last + throttleFrequency) {
@@ -87,7 +87,7 @@
 			$slides = $slideSled.children("li");
 			totalSlides = $slides.length-1;
 			accessibeTitle.text($.map($slides, function(el){
-				return $(el).attr("data-btn-aria-label")
+				return $(el).attr("data-btn-aria-label");
 			}).join(","));
 			initDimensions();
 		};
@@ -129,10 +129,10 @@
 
 		//Set next/prev button and accessible setting state
 		var updateUiState = function(){
-			$this.toggleClass("firstSlide", (activeSlide == 0));
+			$this.toggleClass("firstSlide", (activeSlide === 0));
 			$prev.attr({
-				"disabled": (activeSlide == 0),
-				"aria-hidden": (activeSlide == 0),
+				"disabled": (activeSlide === 0),
+				"aria-hidden": (activeSlide === 0),
 				"aria-label": (activeSlide-1 >= 0) ? ($slides.eq(activeSlide-1).attr("data-btn-aria-label") || $prev.attr("title")) : ""
 			});
 			$this.toggleClass("lastSlide", (activeSlide == totalSlides));
@@ -218,7 +218,7 @@
 
 				}else if(totalSlides == activeSlide && $this.pointerStartTotalWidth < Math.abs($this.pointerLeft)){
 					//right end
-					xPos = ($this.pointerLeft + $this.pointerStartTotalWidth) / -$this.pointerStartWidth
+					xPos = ($this.pointerLeft + $this.pointerStartTotalWidth) / -$this.pointerStartWidth;
 					moveSlides(-(util.easing(xPos > 1 ? 1 : xPos) * $this.pointerStartWidth/8)-$this.pointerStartTotalWidth, true);
 
 				}else{
@@ -313,7 +313,7 @@
 		
 		//public: destroy widget
 		self.destroy = function(){
-			$this.off(".mSwipe")
+			$this.off(".mSwipe");
 			$(window).off("resize.mSwipe", onResize);
 			$this.removeData("mSwipeSlider");
 		};
