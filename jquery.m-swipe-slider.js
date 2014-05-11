@@ -4,7 +4,7 @@
 **/
 
 //UMD (Universal Module Definition) setup to work with AMD and CommonJS
-(function(factory) {
+(function(factory){
 	if(typeof define === "function" && define.amd) {
 		// AMD. Register as an anonymous module.
 		define(["jquery"], factory);
@@ -12,11 +12,11 @@
 		// Browser globals
 		factory(jQuery);
 	}
-}(function($) {
+}(function($){
 	"use strict";
 
 	//single instance constructor that's returned via the factory and added as multi-instance jQuery plugin
-	var MSwipeSlider = function(element, options) {
+	var MSwipeSlider = function(element, options){
 
 		var self = this,
 			$this = $(element),
@@ -50,7 +50,7 @@
 
 		//helpers
 		var util = {
-			throttle : function(fn, throttleFrequency) {
+			throttle : function(fn, throttleFrequency){
 				var last, deferTimer, now, args;
 				throttleFrequency = throttleFrequency || 50;
 
@@ -219,7 +219,7 @@
 				}else if(totalSlides == activeSlide && $this.pointerStartTotalWidth < Math.abs($this.pointerLeft)){
 					//right end
 					xPos = ($this.pointerLeft + $this.pointerStartTotalWidth) / -$this.pointerStartWidth;
-					moveSlides(-(util.easing(xPos > 1 ? 1 : xPos) * $this.pointerStartWidth/8)-$this.pointerStartTotalWidth, true);
+					moveSlides(-(util.easing(xPos > 1 ? 1 : xPos) * $this.pointerStartWidth / 8) - $this.pointerStartTotalWidth, true);
 
 				}else{
 					//normal
@@ -240,8 +240,9 @@
 			$slideSled.removeClass("disable-transition");
 			
 			//decide if slide move is needed
-			var touchLeft = $slideSled.position().left;
-			var slideLeft = -$this.pointerStartWidth * activeSlide;
+			var touchLeft = $slideSled.position().left,
+				slideLeft = -$this.pointerStartWidth * activeSlide;
+
 			if(touchLeft < slideLeft && touchLeft < (slideLeft - settings.pagingThreshhold) && activeSlide < totalSlides){
 				self.next();
 			}else if(touchLeft > slideLeft && touchLeft > (slideLeft + settings.pagingThreshhold) && activeSlide > 0) {
@@ -332,10 +333,10 @@
 
 
 	//make mSwipeSlider available as jQuery plugin
-	$.fn.mSwipeSlider = function(methodOrOptions) {
+	$.fn.mSwipeSlider = function(methodOrOptions){
 		return this.map(function(i, el){
-			var element = $(el);
-			var mSwipeSliderInstance = element.data("mSwipeSlider");
+			var element = $(el),
+				mSwipeSliderInstance = element.data("mSwipeSlider");
 
 			// Return early if this element already has a plugin instance
 			if(!mSwipeSliderInstance) {
@@ -344,6 +345,7 @@
 			}else if(mSwipeSliderInstance[methodOrOptions]){
 				return mSwipeSliderInstance[methodOrOptions].apply(this, Array.prototype.slice.call( arguments, 1 ));			
 			}
+
 			return el;
 		});
 	};
