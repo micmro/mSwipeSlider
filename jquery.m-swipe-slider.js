@@ -51,23 +51,17 @@
 		//helpers
 		var util = {
 			throttle : function(fn, throttleFrequency){
-				var last, deferTimer, now, args;
-				throttleFrequency = throttleFrequency || 50;
-
-				return function() {
-					now = +new Date();
-					args = arguments;
-
-					if(last && now < last + throttleFrequency) {
-						clearTimeout(deferTimer);
-						deferTimer = setTimeout(function () {
-							last = now;
-							fn.apply(self, args);
-						}, throttleFrequency - (now - last));
-					} else {
-						last = now;
-						fn.apply(self, args);
+				throttleFrequency = throttleFrequency || 100;
+				var throttle;
+				return function(){
+					if (throttle) {
+						return;
 					}
+					throttle = setTimeout(function(){
+						throttle = false;
+					}, throttleFrequency);
+
+					fn.apply(this, arguments);
 				};
 			},
 			easing : function(t){
@@ -191,9 +185,9 @@
 		};
 
 
-		var xPos, yScrollDifference;
-		//slide repositioning based on finger - turns out it performs better without throtteling
-		var onTouchMove = function(event){
+		var xPos, yScrollDifference, lastY;
+		//slide repositioning based on finger
+		var onTouchMove = util.throttle(function(event){
 			//safeguard
 			if($this.useTouch && !event.originalEvent.touches){
 				return;
@@ -205,28 +199,28 @@
 				//maintain vertical scroll functionality
 				yScrollDifference = pointSource.pageY - $this.pointerStartY;
 
-				if(Math.abs(yScrollDifference) > 1){
-					scrollTo($(document).scrollLeft(), $(document).scrollTop() - yScrollDifference);
-				}
-				
-				$this.pointerLeft = (-$this.pointerStartWidth * activeSlide) - ($this.pointerStartX - pointSource.pageX);
+					if(Math.abs(yScrollDifference) > 1){
+						scrollTo($(document).scrollLeft(), $(document).scrollTop() - yScrollDifference);
+					}
+					$this.pointerLeft = (-$this.pointerStartWidth * activeSlide) - ($this.pointerStartX - pointSource.pageX);
 
-				if($this.pointerLeft > 0){
-					//left end
-					xPos = $this.pointerLeft/$this.pointerStartWidth;
-					moveSlides(util.easing(xPos > 1 ? 1 : xPos) * ($this.pointerStartWidth / 8), true);
+					if($this.pointerLeft > 0){
+						//left end
+						xPos = $this.pointerLeft/$this.pointerStartWidth;
+						moveSlides(util.easing(xPos > 1 ? 1 : xPos) * ($this.pointerStartWidth / 8), true);
 
-				}else if(totalSlides == activeSlide && $this.pointerStartTotalWidth < Math.abs($this.pointerLeft)){
-					//right end
-					xPos = ($this.pointerLeft + $this.pointerStartTotalWidth) / -$this.pointerStartWidth;
-					moveSlides(-(util.easing(xPos > 1 ? 1 : xPos) * $this.pointerStartWidth / 8) - $this.pointerStartTotalWidth, true);
+					}else if(totalSlides == activeSlide && $this.pointerStartTotalWidth < Math.abs($this.pointerLeft)){
+						//right end
+						xPos = ($this.pointerLeft + $this.pointerStartTotalWidth) / -$this.pointerStartWidth;
+						moveSlides(-(util.easing(xPos > 1 ? 1 : xPos) * $this.pointerStartWidth / 8) - $this.pointerStartTotalWidth, true);
 
-				}else{
-					//normal
-					moveSlides($this.pointerLeft, true);
-				}
+					}else{
+						//normal
+						moveSlides($this.pointerLeft, true);
+					}
+				//}
 			}
-		};
+		}, 16);
 
 
 		//end of touch - decide wether or not to change slide
